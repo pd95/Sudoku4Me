@@ -19,6 +19,7 @@
 		173669EE26A5CFD2008ACC88 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		173669F026A5CFD2008ACC88 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		173669F326A5CFD2008ACC88 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		173669FA26A5D101008ACC88 /* Prototyping.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Prototyping.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +36,7 @@
 		173669E026A5CFD2008ACC88 = {
 			isa = PBXGroup;
 			children = (
+				173669FA26A5D101008ACC88 /* Prototyping.playground */,
 				173669EB26A5CFD2008ACC88 /* Sudoku4Me */,
 				173669EA26A5CFD2008ACC88 /* Products */,
 			);
