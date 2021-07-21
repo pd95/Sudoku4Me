@@ -1,3 +1,6 @@
+//: [Previous](@previous)
+//: [Next](@next)
+
 import Foundation
 import CoreImage
 import CoreImage.CIFilterBuiltins
@@ -8,10 +11,6 @@ var fileURL: URL
 fileURL = Bundle.main.url(forResource: "sudoku-angled", withExtension: "jpeg")!
 fileURL = Bundle.main.url(forResource: "sudoku-top-down", withExtension: "jpeg")!
 fileURL = Bundle.main.url(forResource: "sudoku-2", withExtension: "jpeg")!
-//fileURL = Bundle.main.url(forResource: "Find-Rectangle/Dummy-Rectangle-0", withExtension: "png")!
-//fileURL = Bundle.main.url(forResource: "Find-Rectangle/Dummy-Rectangle-30", withExtension: "png")!
-//fileURL = Bundle.main.url(forResource: "Find-Rectangle/Dummy-RoundedRectangle", withExtension: "png")!
-//fileURL = Bundle.main.url(forResource: "Find-Rectangle/Dummy-NoRectangle", withExtension: "png")!
 guard var image = CIImage(contentsOf: fileURL) else {
     fatalError("Image could not be loaded from \(fileURL)")
 }
@@ -48,6 +47,7 @@ func addOverlay(rectangleObservation: VNRectangleObservation, color: CIColor, in
 }
 
 func detectTextIn(_ image: CIImage) {
+    image
     let size: CGSize = image.extent.size
     let border: CGFloat = 20
     let cellWidth = (size.width - border) / 9
@@ -80,9 +80,11 @@ func detectTextIn(_ image: CIImage) {
         }
     }
     recognizeTextRequest.recognitionLanguages = ["de"]
+    recognizeTextRequest.recognitionLevel = .fast
+    recognizeTextRequest.usesLanguageCorrection = false
+    //recognizeTextRequest.minimumTextHeight = 0.5
 
     for y in 0..<9 {
-//    for y in 2..<5 {
         for x in 0..<9 {
             let point = CGPoint(x: CGFloat(x)*cellWidth+border/2, y: CGFloat(y)*cellHeight+border/2)
             let rect = CGRect(origin: point, size: cellSize)
@@ -92,9 +94,6 @@ func detectTextIn(_ image: CIImage) {
                                                            y: point.y / size.height,
                                                            width: cellSize.width / size.width,
                                                            height: cellSize.height / size.height)
-            recognizeTextRequest.recognitionLevel = .fast
-            recognizeTextRequest.usesLanguageCorrection = false
-//            recognizeTextRequest.minimumTextHeight = 0.5
 
             do {
                 try requestHandler.perform([recognizeTextRequest])
@@ -121,16 +120,6 @@ func handleDetectedRectangles(_ request: VNRequest, error: Error?) {
         filter.bottomLeft = rectangle.bottomLeft.applying(scaleTransform)
         filter.bottomRight = rectangle.bottomRight.applying(scaleTransform)
         let relevantRectangle = filter.outputImage!
-        relevantRectangle
-
-        let colorOverlayImage = addOverlay(rectangleObservation: rectangle, color: CIColor(red: 0, green: 1, blue: 0, alpha: 0.3), in: size)
-
-        let combineFilter = CIFilter.sourceAtopCompositing()
-        combineFilter.inputImage = colorOverlayImage
-        combineFilter.backgroundImage = image
-
-        image = combineFilter.outputImage!
-
         detectTextIn(relevantRectangle)
     }
 }
