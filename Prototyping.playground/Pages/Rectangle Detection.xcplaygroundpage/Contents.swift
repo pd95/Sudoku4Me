@@ -6,7 +6,6 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 import Vision
 
-
 var fileURL: URL
 fileURL = Bundle.main.url(forResource: "Find-Rectangle/Dummy-NoRectangle", withExtension: "png")!
 fileURL = Bundle.main.url(forResource: "Find-Rectangle/Dummy-Rectangle-0", withExtension: "png")!
@@ -26,7 +25,7 @@ if image.extent.width > targetWidth {
     image = resizeFilter.outputImage!
 }
 
-image
+setLiveView(filename: fileURL.lastPathComponent, comment: "Initial file", ciImage: image)
 let size = image.extent.size
 
 
@@ -72,6 +71,10 @@ func handleDetectedRectangles(_ request: VNRequest, error: Error?) {
         combineFilter.backgroundImage = image
 
         let highlightedImage = combineFilter.outputImage!
+
+        setLiveView(filename: fileURL.lastPathComponent,
+                    comment: "Detected rectangle",
+                    ciImage: highlightedImage)
     }
 }
 

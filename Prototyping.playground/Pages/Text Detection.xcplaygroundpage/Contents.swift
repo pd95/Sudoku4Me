@@ -24,7 +24,7 @@ if image.extent.width > targetWidth {
     image = resizeFilter.outputImage!
 }
 
-image
+setLiveView(filename: fileURL.lastPathComponent, comment: "Initial file", ciImage: image)
 let size = image.extent.size
 
 
@@ -48,6 +48,8 @@ func addOverlay(rectangleObservation: VNRectangleObservation, color: CIColor, in
 
 func detectTextIn(_ image: CIImage) {
     image
+    setLiveView(filename: fileURL.lastPathComponent, comment: "Detected grid", ciImage: image)
+
     let size: CGSize = image.extent.size
     let border: CGFloat = 20
     let cellWidth = (size.width - border) / 9
@@ -73,7 +75,7 @@ func detectTextIn(_ image: CIImage) {
                     print(currentCell.x, currentCell.y, ":", text[text.startIndex..<text.endIndex], box.boundingBox.size, isGood ? "🟢" : "🔴")
 
                     if !isGood {
-                        usleep(2000000)
+                        usleep(200000)
                     }
                 }
             }
