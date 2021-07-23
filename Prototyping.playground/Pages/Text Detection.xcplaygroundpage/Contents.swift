@@ -74,8 +74,8 @@ func detectTextIn(_ image: CIImage) {
                 if let box = try? candidateText.boundingBox(for: text.startIndex..<text.endIndex) {
 
                     image.cropped(to: currentCell.rect)
-                    let isGood = (0.15...0.45).contains(box.boundingBox.size.width)
-                              && (0.3...0.7).contains(box.boundingBox.size.height)
+                    let isGood = (0.10...0.45).contains(box.boundingBox.size.width)
+                              && (0.3...0.8).contains(box.boundingBox.size.height)
                     print(currentCell.x, currentCell.y, ":", text[text.startIndex..<text.endIndex], box.boundingBox.size, isGood ? "🟢" : "🔴")
 
                     if !isGood {
