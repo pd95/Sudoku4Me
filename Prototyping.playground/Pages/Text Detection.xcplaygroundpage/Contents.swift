@@ -14,17 +14,17 @@ fileURL = Bundle.main.url(forResource: "sudoku2", withExtension: "jpeg")!
 //fileURL = Bundle.main.url(forResource: "sudoku3-angled", withExtension: "jpeg")!
 //fileURL = Bundle.main.url(forResource: "sudoku3", withExtension: "jpeg")!
 //fileURL = Bundle.main.url(forResource: "sudoku4", withExtension: "jpeg")!
-fileURL = Bundle.main.url(forResource: "sudoku-2", withExtension: "jpeg")!
-guard var image = CIImage(contentsOf: fileURL) else {
+guard var image = CIImage(contentsOf: fileURL, options: [.applyOrientationProperty: true]) else {
     fatalError("Image could not be loaded from \(fileURL)")
 }
 
 // Reduce size of very big images
-let targetWidth = 500.0
-if image.extent.width > targetWidth {
+let desiredMaxLength = 500.0
+let smallestSide = min(image.extent.width, image.extent.height)
+if  desiredMaxLength < smallestSide {
     let resizeFilter = CIFilter.lanczosScaleTransform()
     resizeFilter.inputImage = image
-    resizeFilter.scale = Float(targetWidth/image.extent.width)
+    resizeFilter.scale = Float(desiredMaxLength/smallestSide)
     image = resizeFilter.outputImage!
 }
 
