@@ -10,6 +10,10 @@ import Vision
 var fileURL: URL
 fileURL = Bundle.main.url(forResource: "sudoku-angled", withExtension: "jpeg")!
 fileURL = Bundle.main.url(forResource: "sudoku-top-down", withExtension: "jpeg")!
+fileURL = Bundle.main.url(forResource: "sudoku2", withExtension: "jpeg")!
+//fileURL = Bundle.main.url(forResource: "sudoku3-angled", withExtension: "jpeg")!
+//fileURL = Bundle.main.url(forResource: "sudoku3", withExtension: "jpeg")!
+//fileURL = Bundle.main.url(forResource: "sudoku4", withExtension: "jpeg")!
 fileURL = Bundle.main.url(forResource: "sudoku-2", withExtension: "jpeg")!
 guard var image = CIImage(contentsOf: fileURL) else {
     fatalError("Image could not be loaded from \(fileURL)")

@@ -12,6 +12,9 @@ fileURL = Bundle.main.url(forResource: "Find-Rectangle/Dummy-Rectangle-0", withE
 fileURL = Bundle.main.url(forResource: "Find-Rectangle/Dummy-Rectangle-30", withExtension: "png")!
 //fileURL = Bundle.main.url(forResource: "Find-Rectangle/Dummy-RoundedRectangle", withExtension: "png")!
 fileURL = Bundle.main.url(forResource: "sudoku-angled", withExtension: "jpeg")!
+fileURL = Bundle.main.url(forResource: "sudoku2", withExtension: "jpeg")!
+fileURL = Bundle.main.url(forResource: "sudoku3-angled", withExtension: "jpeg")!
+fileURL = Bundle.main.url(forResource: "sudoku4", withExtension: "jpeg")!
 guard var image = CIImage(contentsOf: fileURL) else {
     fatalError("Image could not be loaded from \(fileURL)")
 }
