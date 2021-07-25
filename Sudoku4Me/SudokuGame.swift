@@ -29,6 +29,11 @@ struct SudokuGame {
     typealias GridPosition = (x: Int, y: Int)
     typealias GridValue = Int?
 
+    struct Cell {
+        var value: GridValue = nil
+        var editable: Bool = true
+    }
+
     enum GameStatus {
         case initial
         case running
@@ -36,18 +41,18 @@ struct SudokuGame {
     }
 
     enum GameError: Error {
-        case setNotAllowed
+        case invalidGameStatus(GameStatus)
         case invalidPosition(GridPosition)
         case invalidValue(GridValue)
         case internalError
     }
 
-    private var grid: [GridValue]
+    private var grid: [Cell]
     private(set) var status: GameStatus
 
     // MARK: - Initializer
     init() {
-        grid = Array(repeating: nil, count: Self.length * Self.length)
+        grid = Array(repeating: Cell(), count: Self.length * Self.length)
         status = .initial
     }
 
@@ -64,12 +69,16 @@ struct SudokuGame {
 
 
     // MARK: - Accessors
-    func value(at position: GridPosition) -> GridValue {
+    func cell(at position: GridPosition) -> Cell {
         grid[position.y * Self.length + position.x]
     }
 
+    func value(at position: GridPosition) -> GridValue {
+        cell(at: position).value
+    }
+
     mutating func set(at position: GridPosition, value: GridValue) throws {
-        if status != .initial { throw GameError.setNotAllowed }
+        if status != .initial { throw GameError.invalidGameStatus(status) }
 
         if     Self.positionRange.contains(position.x) == false
             || Self.positionRange.contains(position.y) == false {
@@ -80,12 +89,22 @@ struct SudokuGame {
             throw GameError.invalidValue(value)
         }
 
-        grid[position.y * Self.length + position.x] = value
+        grid[position.y * Self.length + position.x].value = value
     }
 
     // MARK: - Game status
 
-    mutating func start() {
+    mutating func start() throws {
+        if status != .initial { throw GameError.invalidGameStatus(status) }
+
+        // Make all populated cells non-editable
+        grid = grid.map({ cell in
+            if let value = cell.value {
+                return Cell(value: value, editable: false)
+            }
+            return cell
+        })
+
         status = .running
     }
 
@@ -125,14 +144,14 @@ struct SudokuGame {
     // MARK: - Grid accessors
 
     private func gridRow(at index: Int) -> [GridValue] {
-        Array(grid[index * Self.length..<(index+1) * Self.length])
+        Array(grid[index * Self.length..<(index+1) * Self.length].map(\.value))
     }
 
     private func gridColumn(at index: Int) -> [GridValue] {
         var array = [GridValue](repeating: nil, count: Self.length)
 
         for y in Self.positionRange {
-            array[y] = grid[y * Self.length + index]
+            array[y] = grid[y * Self.length + index].value
         }
 
         return array
@@ -149,7 +168,7 @@ struct SudokuGame {
 
         for y in yRange {
             for x in xRange {
-                array.append(grid[y * Self.length + x])
+                array.append(grid[y * Self.length + x].value)
             }
         }
 
@@ -193,12 +212,12 @@ extension SudokuGame: CustomStringConvertible {
     var description: String {
         var text = "SudokuGame(status: \(status), grid: [\n"
         var count = 0
-        for value in grid {
-            if let value = value {
-                text += String(format: "%2d", value)
+        for cell in grid {
+            if let value = cell.value {
+                text += String(format: "%2d", value) + (cell.editable ? " " : "*")
             }
             else {
-                text += " -"
+                text += " - "
             }
             count += 1
             if count == Self.length {
