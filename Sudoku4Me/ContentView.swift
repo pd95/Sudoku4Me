@@ -25,6 +25,21 @@ struct ContentView: View {
                 spacing: 0,
                 content: gridCells
             )
+            .overlay(GeometryReader{ proxy in
+                let width = proxy.size.width/3
+                let height = proxy.size.height/3
+                VStack(spacing: 0) {
+                    ForEach(0..<3) { _ in
+                        HStack(spacing: 0) {
+                            ForEach(0..<3) { _ in
+                                Rectangle()
+                                    .stroke(lineWidth: 3)
+                                    .frame(width: width, height: height)
+                            }
+                        }
+                    }
+                }
+            })
         }
     }
 
@@ -33,11 +48,12 @@ struct ContentView: View {
             ForEach(0..<9) { x in
                 ZStack {
                     Rectangle()
-                        .stroke(Color.primary)
+                        .stroke(Color.primary, lineWidth: 0.5)
 
-                    if let value = game.value(at: (x,y)) {
+                    let cell = game.cell(at: (x,y))
+                    if let value = cell.value {
                         Text("\(value)")
-                            .font(.title2)
+                            .font(cell.editable ? Font.title2.bold() : Font.title2)
                     }
                 }
                 .aspectRatio(1, contentMode: .fill)
