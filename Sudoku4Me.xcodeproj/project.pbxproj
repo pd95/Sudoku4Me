@@ -11,6 +11,7 @@
 		173669EF26A5CFD2008ACC88 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173669EE26A5CFD2008ACC88 /* ContentView.swift */; };
 		173669F126A5CFD2008ACC88 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 173669F026A5CFD2008ACC88 /* Assets.xcassets */; };
 		173669F426A5CFD2008ACC88 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 173669F326A5CFD2008ACC88 /* Preview Assets.xcassets */; };
+		178DECC526AD8DC3000410D0 /* SudokuGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178DECC426AD8DC3000410D0 /* SudokuGame.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +21,7 @@
 		173669F026A5CFD2008ACC88 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		173669F326A5CFD2008ACC88 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		173669FA26A5D101008ACC88 /* Prototyping.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Prototyping.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		178DECC426AD8DC3000410D0 /* SudokuGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuGame.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				173669EC26A5CFD2008ACC88 /* Sudoku4MeApp.swift */,
+				178DECC426AD8DC3000410D0 /* SudokuGame.swift */,
 				173669EE26A5CFD2008ACC88 /* ContentView.swift */,
 				173669F026A5CFD2008ACC88 /* Assets.xcassets */,
 				173669F226A5CFD2008ACC88 /* Preview Content */,
@@ -139,6 +142,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				178DECC526AD8DC3000410D0 /* SudokuGame.swift in Sources */,
 				173669EF26A5CFD2008ACC88 /* ContentView.swift in Sources */,
 				173669ED26A5CFD2008ACC88 /* Sudoku4MeApp.swift in Sources */,
 			);
