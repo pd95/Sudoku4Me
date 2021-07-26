@@ -31,7 +31,7 @@ struct CustomKeyboard: View {
             }
             .frame(minWidth: 44, maxWidth: 60)
             .overlay(
-                Image(systemName: "delete.backward")
+                Image(systemName: "delete.left")
                     .imageScale(.large)
                     .font(.title2)
             )
