@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var game = SudokuGame.example
+    @State private var highlightedRow: Int?
+    @State private var highlightedColumn: Int?
 
     let rows: [GridItem] = SudokuGame.positionRange.map({ _ in
         GridItem(.flexible(minimum: 30, maximum: 44), spacing: 0)
@@ -40,24 +42,71 @@ struct ContentView: View {
                     }
                 }
             })
+
+            if game.status == .initial {
+                Button(action: startGame) {
+                    Text("Start")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.accentColor)
+                        )
+                }
+            }
+
+            CustomKeyboard(tapAction: setValue)
+                .transition(.move(edge: .bottom))
+        }
+        .padding()
+    }
+
+    private func gridCells() -> some View {
+        ForEach(0..<9) { y in
+            ForEach(0..<9) { x in
+                SudokuCellView(
+                    cell: game.cell(at: (x,y)),
+                    isHighlighted: highlightedRow == y || highlightedColumn == x,
+                    tapAction: {
+                        hightlightCell(x,y)
+                    }
+                )
+            }
         }
     }
 
-    func gridCells() -> some View {
-        ForEach(0..<9) { y in
-            ForEach(0..<9) { x in
-                ZStack {
-                    Rectangle()
-                        .stroke(Color.primary, lineWidth: 0.5)
-
-                    let cell = game.cell(at: (x,y))
-                    if let value = cell.value {
-                        Text("\(value)")
-                            .font(cell.editable ? Font.title2.bold() : Font.title2)
-                    }
-                }
-                .aspectRatio(1, contentMode: .fill)
+    private func startGame() {
+        withAnimation(.default) {
+            do {
+                try game.start()
+            } catch {
+                print("error: \(error)")
             }
+        }
+    }
+
+    private func setValue(_ value: Int?) {
+        guard let x = highlightedColumn,
+              let y = highlightedRow
+        else {
+            return
+        }
+        do {
+            try game.set(at: (x, y), value: value)
+        } catch {
+            print("error: \(error)")
+        }
+    }
+
+    private func hightlightCell(_ x: Int, _ y: Int) {
+        if x == highlightedColumn && y == highlightedRow {
+            highlightedRow = nil
+            highlightedColumn = nil
+        }
+        else {
+            highlightedRow = y
+            highlightedColumn = x
         }
     }
 }
