@@ -44,6 +44,7 @@ struct SudokuGame {
         case invalidGameStatus(GameStatus)
         case invalidPosition(GridPosition)
         case invalidValue(GridValue)
+        case cellNotEditable
         case internalError
     }
 
@@ -78,7 +79,6 @@ struct SudokuGame {
     }
 
     mutating func set(at position: GridPosition, value: GridValue) throws {
-        if status != .initial { throw GameError.invalidGameStatus(status) }
 
         if     Self.positionRange.contains(position.x) == false
             || Self.positionRange.contains(position.y) == false {
@@ -89,7 +89,17 @@ struct SudokuGame {
             throw GameError.invalidValue(value)
         }
 
-        grid[position.y * Self.length + position.x].value = value
+        let offset = position.y * Self.length + position.x
+        if status == .running {
+            if grid[offset].editable == false {
+                throw GameError.cellNotEditable
+            }
+        }
+        else if status != .initial {
+            throw GameError.invalidGameStatus(status)
+        }
+
+        grid[offset].value = value
     }
 
     // MARK: - Game status
