@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var game = SudokuGame.example
+    @State private var game = SudokuGame.example2
     @State private var highlightedRow: Int?
     @State private var highlightedColumn: Int?
 
@@ -17,49 +17,56 @@ struct ContentView: View {
     })
 
     var body: some View {
-        VStack {
-            Text("Sudoku!")
-                .font(.largeTitle)
-                .padding()
+        NavigationView {
+            VStack {
 
-            LazyVGrid(
-                columns: columns,
-                spacing: 0,
-                content: gridCells
-            )
-            .overlay(GeometryReader{ proxy in
-                let width = proxy.size.width/3
-                let height = proxy.size.height/3
-                VStack(spacing: 0) {
-                    ForEach(0..<3) { _ in
-                        HStack(spacing: 0) {
-                            ForEach(0..<3) { _ in
-                                Rectangle()
-                                    .stroke(lineWidth: 3)
-                                    .frame(width: width, height: height)
+                LazyVGrid(
+                    columns: columns,
+                    spacing: 0,
+                    content: gridCells
+                )
+                .overlay(GeometryReader{ proxy in
+                    let width = proxy.size.width/3
+                    let height = proxy.size.height/3
+                    VStack(spacing: 0) {
+                        ForEach(0..<3) { _ in
+                            HStack(spacing: 0) {
+                                ForEach(0..<3) { _ in
+                                    Rectangle()
+                                        .stroke(lineWidth: 3)
+                                        .frame(width: width, height: height)
+                                }
                             }
                         }
                     }
-                }
-            })
+                })
 
-            if game.status == .initial {
-                Button(action: startGame) {
-                    Text("Start")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.accentColor)
-                        )
+                if game.status == .done {
+                    Text("Well done!")
+                        .font(.title)
+                        .padding(.vertical, 20)
+                }
+                else {
+                    CustomKeyboard(tapAction: setValue)
+                        .transition(.move(edge: .bottom))
                 }
             }
-
-            CustomKeyboard(tapAction: setValue)
-                .transition(.move(edge: .bottom))
+            .frame(maxHeight: .infinity, alignment: .top)
+            .padding()
+            .navigationTitle("Sudoku!")
+            .toolbar {
+                if game.status == .initial {
+                    Button(action: startGame) {
+                        Text("Start")
+                    }
+                }
+                if game.status == .done {
+                    Button(action: newGame) {
+                        Text("New")
+                    }
+                }
+            }
         }
-        .padding()
     }
 
     private func gridCells() -> some View {
@@ -74,6 +81,12 @@ struct ContentView: View {
                 )
             }
         }
+    }
+
+    private func newGame() {
+        game = .init()
+        highlightedColumn = nil
+        highlightedRow = nil
     }
 
     private func startGame() {
