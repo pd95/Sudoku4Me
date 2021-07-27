@@ -114,6 +114,17 @@ struct SudokuGame {
         grid[offset].value = value
     }
 
+    func allowedValues(for position: GridPosition) -> Set<Int> {
+        let setValues = gridRow(at: position.y)
+            + gridColumn(at: position.x)
+            + gridRegion(xRegion: position.x/SudokuGame.regionlength, yRegion: position.y/SudokuGame.regionlength)
+
+        let validValues = Set(SudokuGame.valueRange).symmetricDifference(setValues.compactMap({$0}))
+        print("remaining", validValues)
+
+        return validValues
+    }
+
     // MARK: - Game status
 
     mutating func start() throws {
@@ -181,13 +192,14 @@ struct SudokuGame {
     }
 
     private func gridRegion(at index: Int) -> [GridValue] {
+        gridRegion(xRegion: index % Self.regionlength, yRegion: index / Self.regionlength)
+    }
+
+    private func gridRegion(xRegion: Int, yRegion: Int) -> [GridValue] {
         var array = [GridValue]()
 
-        let xRegionIndex = (index % Self.regionlength)
-        let yRegionIndex = index / Self.regionlength
-
-        let xRange = Self.positionRange[xRegionIndex * Self.regionlength ..< xRegionIndex * Self.regionlength + Self.regionlength]
-        let yRange = Self.positionRange[yRegionIndex * Self.regionlength ..< yRegionIndex * Self.regionlength + Self.regionlength]
+        let xRange = Self.positionRange[xRegion * Self.regionlength ..< xRegion * Self.regionlength + Self.regionlength]
+        let yRange = Self.positionRange[yRegion * Self.regionlength ..< yRegion * Self.regionlength + Self.regionlength]
 
         for y in yRange {
             for x in xRange {
