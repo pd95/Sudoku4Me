@@ -18,24 +18,34 @@ struct CustomKeyboard: View {
                 HStack(spacing: Self.spacing) {
                     ForEach(0..<3) { x in
                         let value = 1 + x + y * 3
-                        let cell = SudokuGame.Cell(value: value, editable: false)
-                        SudokuCellView(cell: cell, isHighlighted: false) {
-                            tapAction(cell.value)
+                        Button(action: { tapAction(value) }) {
+                            Text(String(value))
+                                .font(.title2.bold())
                         }
                     }
                 }
             }
-            SudokuCellView(cell: SudokuGame.Cell(value: nil, editable: false), isHighlighted: false) {
-                tapAction(nil)
-            }
-            .overlay(
+            Button(action: { tapAction(nil) }) {
                 Image(systemName: "delete.left")
-                    .imageScale(.large)
                     .font(.title2)
-            )
+            }
         }
-        .frame(minHeight: 44 * 4)
+        .buttonStyle(CustomButtonStyle())
         .padding(Self.spacing)
+    }
+
+
+    struct CustomButtonStyle: ButtonStyle {
+        func makeBody(configuration: Configuration) -> some View {
+            configuration.label
+                .frame(minWidth: 44, minHeight: 44)
+                .aspectRatio(contentMode: .fill)
+                .background(
+                    RoundedRectangle(cornerRadius: 5)
+                        .stroke()
+                )
+                .foregroundColor(.accentColor.opacity(configuration.isPressed ? 0.5 : 1))
+        }
     }
 }
 
