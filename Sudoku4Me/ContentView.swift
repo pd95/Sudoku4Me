@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var game = SudokuGame.example2
+    @State private var game = SudokuGame.example
     @State private var highlightedRow: Int?
     @State private var highlightedColumn: Int?
     @State private var showingStopConfirm = false
@@ -16,6 +16,17 @@ struct ContentView: View {
     let columns: [GridItem] = SudokuGame.positionRange.map({ _ in
         GridItem(.flexible(minimum: 30, maximum: 44), spacing: 0)
     })
+
+    var allowedValues: Set<Int>? {
+        guard game.status == .running else { return nil }
+
+        guard let highlightedRow = highlightedRow,
+              let highlightedColumn = highlightedColumn
+        else {
+            return nil
+        }
+        return game.allowedValues(for: (highlightedColumn, highlightedRow))
+    }
 
     var body: some View {
         NavigationView {
@@ -48,7 +59,7 @@ struct ContentView: View {
                         .padding(.vertical, 20)
                 }
                 else {
-                    CustomKeyboard(tapAction: setValue)
+                    CustomKeyboard(tapAction: setValue, values: allowedValues)
                         .transition(.move(edge: .bottom))
                 }
             }
