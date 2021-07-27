@@ -92,10 +92,13 @@ struct ContentView: View {
         else {
             return
         }
-        do {
-            try game.set(at: (x, y), value: value)
-        } catch {
-            print("error: \(error)")
+        withAnimation {
+            do {
+                try game.set(at: (x, y), value: value)
+                game.checkDone()
+            } catch {
+                print("error: \(error)")
+            }
         }
     }
 

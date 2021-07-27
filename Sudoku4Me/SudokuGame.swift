@@ -118,6 +118,7 @@ struct SudokuGame {
         status = .running
     }
 
+    @discardableResult
     mutating func checkDone() -> Bool {
         var numberOfProblemsFound = 0
 
