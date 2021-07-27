@@ -13,10 +13,6 @@ struct ContentView: View {
     @State private var highlightedColumn: Int?
     @State private var showingStopConfirm = false
 
-    let columns: [GridItem] = SudokuGame.positionRange.map({ _ in
-        GridItem(.flexible(minimum: 30, maximum: 44), spacing: 0)
-    })
-
     var allowedValues: Set<Int>? {
         guard game.status == .running else { return nil }
 
@@ -32,26 +28,11 @@ struct ContentView: View {
         NavigationView {
             VStack {
 
-                LazyVGrid(
-                    columns: columns,
-                    spacing: 0,
-                    content: gridCells
+                SudokuGridView(
+                    game: game,
+                    highlightedRow: $highlightedRow,
+                    highlightedColumn: $highlightedColumn
                 )
-                .overlay(GeometryReader{ proxy in
-                    let width = proxy.size.width/3
-                    let height = proxy.size.height/3
-                    VStack(spacing: 0) {
-                        ForEach(0..<3) { _ in
-                            HStack(spacing: 0) {
-                                ForEach(0..<3) { _ in
-                                    Rectangle()
-                                        .stroke(lineWidth: 3)
-                                        .frame(width: width, height: height)
-                                }
-                            }
-                        }
-                    }
-                })
 
                 if game.status == .done {
                     Text("Well done!")
@@ -100,20 +81,6 @@ struct ContentView: View {
         }
     }
 
-    private func gridCells() -> some View {
-        ForEach(0..<9) { y in
-            ForEach(0..<9) { x in
-                SudokuCellView(
-                    cell: game.cell(at: (x,y)),
-                    isHighlighted: highlightedRow == y || highlightedColumn == x,
-                    tapAction: {
-                        hightlightCell(x,y)
-                    }
-                )
-            }
-        }
-    }
-
     private func newGame() {
         game = .init()
         highlightedColumn = nil
@@ -153,17 +120,6 @@ struct ContentView: View {
             } catch {
                 print("error: \(error)")
             }
-        }
-    }
-
-    private func hightlightCell(_ x: Int, _ y: Int) {
-        if x == highlightedColumn && y == highlightedRow {
-            highlightedRow = nil
-            highlightedColumn = nil
-        }
-        else {
-            highlightedRow = y
-            highlightedColumn = x
         }
     }
 }
