@@ -23,16 +23,31 @@ let exampleComplete: [Int?] = [
     3,1,2,8,5,7,4,9,6,
     1,2,5,7,8,6,9,3,4,
     8,6,3,5,9,4,1,7,2,
-    7,4,9,1,3,2,8,6,5,
+    7,4,9,1,3,2,8,nil,5,  // 6 is missing
 ]
 
 guard var game = try? SudokuGame(initialGrid: exampleComplete) else {
     fatalError("Invalid initial grid")
 }
-game.start()
+
+// Start game
+try game.start()
 print(game)
 
+
+// Check valid values for a position
+var position: SudokuGame.GridPosition = (x: 7, y: 8)
+_ = game.allowedValues(for: position)
+
+// Set the value
+try? game.set(at: position, value: 6)
+print(game)
+
+// Recheck remaining values
+_ = game.allowedValues(for: position)
+
 game.checkDone()
+print(game)
 
 
 
