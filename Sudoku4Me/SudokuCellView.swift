@@ -30,6 +30,7 @@ struct SudokuCellView: View {
 
             Text(String(cell.value ?? -1))
                 .opacity(cell.value == nil ? 0 : 1)
+                .animation(nil)
         }
         .font(cell.editable ? Font.title2 : Font.title2.bold())
         .contentShape(Rectangle())
