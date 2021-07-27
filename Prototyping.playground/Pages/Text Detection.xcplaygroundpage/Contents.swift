@@ -19,10 +19,10 @@ func setLiveView(filename: String, comment: String, ciImage: CIImage, game: Sudo
                                    highlightedRow: .constant(nil),
                                    highlightedColumn: .constant(nil))
                         .padding()
+                        .foregroundColor(Color.primary.opacity(0.5))
                         .background(
                             Image(uiImage: uiImage)
                                 .resizable()
-                                .colorMultiply(.white)
                                 .opacity(0.3)
                                 .padding(10)
                         )
