@@ -22,20 +22,19 @@ struct CustomKeyboard: View {
                         SudokuCellView(cell: cell, isHighlighted: false) {
                             tapAction(cell.value)
                         }
-                        .frame(minWidth: 44, maxWidth: 60)
                     }
                 }
             }
             SudokuCellView(cell: SudokuGame.Cell(value: nil, editable: false), isHighlighted: false) {
                 tapAction(nil)
             }
-            .frame(minWidth: 44, maxWidth: 60)
             .overlay(
                 Image(systemName: "delete.left")
                     .imageScale(.large)
                     .font(.title2)
             )
         }
+        .frame(minHeight: 44 * 4)
         .padding(Self.spacing)
     }
 }
