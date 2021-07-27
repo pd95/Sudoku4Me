@@ -6,6 +6,31 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 import Vision
 
+import PlaygroundSupport
+import SwiftUI
+
+func setLiveView(filename: String, comment: String, ciImage: CIImage, game: SudokuGame? = nil) {
+    if let uiImage = ciImage.uiImage {
+        PlaygroundPage.current.setLiveView(
+            VStack {
+                ImageFileCellView(filename: filename, comment: comment, uiImage: uiImage)
+                if let game = game {
+                    SudokuGridView(game: game,
+                                   highlightedRow: .constant(nil),
+                                   highlightedColumn: .constant(nil))
+                        .padding()
+                        .background(
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .opacity(0.5)
+                                .padding(10)
+                        )
+                }
+            }
+            .frame(maxHeight: 600)
+        )
+    }
+}
 
 var fileURL: URL
 fileURL = Bundle.main.url(forResource: "sudoku-angled", withExtension: "jpeg")!
@@ -62,6 +87,7 @@ func detectTextIn(_ image: CIImage) {
 
     let requestHandler = VNImageRequestHandler(ciImage: image, options: [:])
     var currentCell: (x: Int, y: Int, rect: CGRect) = (-1, -1, .zero)
+    var game = SudokuGame()
 
     let recognizeTextRequest = VNRecognizeTextRequest { (request: VNRequest, error: Error?) in
         guard let results = request.results as? [VNRecognizedTextObservation] else {
@@ -76,10 +102,27 @@ func detectTextIn(_ image: CIImage) {
                     image.cropped(to: currentCell.rect)
                     let isGood = (0.10...0.45).contains(box.boundingBox.size.width)
                               && (0.3...0.8).contains(box.boundingBox.size.height)
-                    print(currentCell.x, currentCell.y, ":", text[text.startIndex..<text.endIndex], box.boundingBox.size, isGood ? "🟢" : "🔴")
+
+                    var valueString = text[text.startIndex..<text.endIndex]
+                    print(currentCell.x, currentCell.y, ":", valueString, box.boundingBox.size, isGood ? "🟢" : "🔴")
 
                     if !isGood {
                         usleep(200000)
+                    }
+                    else {
+                        if valueString == "I" || valueString == "i" {
+                            valueString = "1"
+                        }
+                        else if valueString == "O" ||  valueString == "o" {
+                            valueString = "0"
+                        }
+                        if let value = Int(valueString) {
+                            do {
+                                try game.set(at: (currentCell.x, 8-currentCell.y), value: value)
+                            } catch {
+                                print(error)
+                            }
+                        }
                     }
                 }
             }
@@ -108,6 +151,12 @@ func detectTextIn(_ image: CIImage) {
             }
         }
     }
+
+    try? game.start()
+    setLiveView(filename: fileURL.lastPathComponent,
+                comment: "Detected grid",
+                ciImage: image,
+                game: game)
 }
 
 

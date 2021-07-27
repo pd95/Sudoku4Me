@@ -1,38 +1,40 @@
 import PlaygroundSupport
 import SwiftUI
 
-let context = CIContext()
+extension CIContext {
+    public static let shared = CIContext()
+}
 
-struct ImageFileCellView: View {
+extension CIImage {
+    public var uiImage: UIImage? {
+        guard let cgimg = CIContext.shared.createCGImage(self, from: extent) else {
+            return nil
+        }
+        return UIImage(cgImage: cgimg)
+    }
+}
+
+public struct ImageFileCellView: View {
+    public init(filename: String, comment: String?, uiImage: UIImage) {
+        self.filename = filename
+        self.comment = comment
+        self.uiImage = uiImage
+    }
+
     let filename: String
     let comment: String?
     let uiImage: UIImage
 
-    var body: some View {
+    public var body: some View {
         VStack {
             Text(filename)
                 .font(.headline)
                 .padding()
             Image(uiImage: uiImage)
                 .resizable()
-                .aspectRatio(contentMode: .fill)
+                .aspectRatio(contentMode: .fit)
             comment.map(Text.init)?.foregroundColor(.secondary).padding()
         }
+        .frame(maxWidth: 400)
     }
 }
-
-public func setLiveView(filename: String, comment: String? = nil, uiImage: UIImage) {
-    print("Showing \(filename)")
-    PlaygroundPage.current.setLiveView(
-        ImageFileCellView(filename: filename, comment: comment, uiImage: uiImage)
-    )
-}
-
-public func setLiveView(filename: String, comment: String? = nil, ciImage: CIImage) {
-    if let cgimg = context.createCGImage(ciImage, from: ciImage.extent) {
-
-        let uiImage = UIImage(cgImage: cgimg)
-        setLiveView(filename: filename, comment: comment, uiImage: uiImage)
-    }
-}
-

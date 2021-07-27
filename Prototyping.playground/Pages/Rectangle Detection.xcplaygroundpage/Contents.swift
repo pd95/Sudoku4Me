@@ -6,6 +6,17 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 import Vision
 
+import PlaygroundSupport
+import SwiftUI
+
+func setLiveView(filename: String, comment: String, ciImage: CIImage) {
+    if let uiImage = ciImage.uiImage {
+        PlaygroundPage.current.setLiveView(
+            ImageFileCellView(filename: filename, comment: comment, uiImage: uiImage)
+        )
+    }
+}
+
 var fileURL: URL
 fileURL = Bundle.main.url(forResource: "Find-Rectangle/Dummy-NoRectangle", withExtension: "png")!
 fileURL = Bundle.main.url(forResource: "Find-Rectangle/Dummy-Rectangle-0", withExtension: "png")!
