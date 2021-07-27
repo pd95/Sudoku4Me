@@ -12,7 +12,7 @@ struct ContentView: View {
     @State private var highlightedRow: Int?
     @State private var highlightedColumn: Int?
 
-    let rows: [GridItem] = SudokuGame.positionRange.map({ _ in
+    let columns: [GridItem] = SudokuGame.positionRange.map({ _ in
         GridItem(.flexible(minimum: 30, maximum: 44), spacing: 0)
     })
 
@@ -22,8 +22,8 @@ struct ContentView: View {
                 .font(.largeTitle)
                 .padding()
 
-            LazyHGrid(
-                rows: rows,
+            LazyVGrid(
+                columns: columns,
                 spacing: 0,
                 content: gridCells
             )
