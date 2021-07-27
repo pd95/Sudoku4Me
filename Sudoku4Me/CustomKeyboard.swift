@@ -11,6 +11,12 @@ struct CustomKeyboard: View {
     static private let spacing: CGFloat = 5
 
     let tapAction: (Int?) -> Void
+    let values: Set<Int>
+
+    init(tapAction: @escaping (Int?) -> Void, values: Set<Int>? = nil) {
+        self.tapAction = tapAction
+        self.values = values ?? Set(SudokuGame.valueRange)
+    }
 
     var body: some View {
         VStack(spacing: Self.spacing) {
@@ -22,6 +28,7 @@ struct CustomKeyboard: View {
                             Text(String(value))
                                 .font(.title2.bold())
                         }
+                        .disabled(values.contains(value) == false)
                     }
                 }
             }
@@ -52,7 +59,10 @@ struct CustomKeyboard: View {
 
 struct CustomKeyboard_Previews: PreviewProvider {
     static var previews: some View {
-        CustomKeyboard(tapAction: { print("tapped on \(String(describing: $0))") })
-            .frame(maxWidth: 400, maxHeight: 400)
+        Group {
+            CustomKeyboard(tapAction: { print("tapped on \(String(describing: $0))") })
+            CustomKeyboard(tapAction: { print("tapped on \(String(describing: $0))") }, values: Set([2,3,5,7,8,9]))
+        }
+        .previewLayout(.sizeThatFits)
     }
 }
