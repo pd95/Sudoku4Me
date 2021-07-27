@@ -11,6 +11,7 @@ struct ContentView: View {
     @State private var game = SudokuGame.example2
     @State private var highlightedRow: Int?
     @State private var highlightedColumn: Int?
+    @State private var showingStopConfirm = false
 
     let columns: [GridItem] = SudokuGame.positionRange.map({ _ in
         GridItem(.flexible(minimum: 30, maximum: 44), spacing: 0)
@@ -53,16 +54,35 @@ struct ContentView: View {
             }
             .frame(maxHeight: .infinity, alignment: .top)
             .padding()
+            .alert(isPresented: $showingStopConfirm) {
+                Alert(title: Text("Stop running game?"),
+                      message: Text("Do you really want to loose the current game progress?"),
+                      primaryButton: .default(Text("OK"), action: newGame),
+                      secondaryButton: .cancel())
+            }
             .navigationTitle("Sudoku!")
             .toolbar {
-                if game.status == .initial {
-                    Button(action: startGame) {
-                        Text("Start")
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    switch game.status {
+                    case .initial:
+                        Button(action: startGame) {
+                            Text("Start")
+                        }
+                    case .running:
+                        Button(action: stopGame) {
+                            Text("Stop")
+                        }
+                    case .done:
+                        Button(action: newGame) {
+                            Text("New")
+                        }
                     }
                 }
-                if game.status == .done {
-                    Button(action: newGame) {
-                        Text("New")
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    if game.status == .initial {
+                        Button(action: scanPuzzle) {
+                            Image(systemName: "camera")
+                        }
                     }
                 }
             }
@@ -89,6 +109,9 @@ struct ContentView: View {
         highlightedRow = nil
     }
 
+    private func scanPuzzle() {
+    }
+
     private func startGame() {
         withAnimation(.default) {
             do {
@@ -97,6 +120,13 @@ struct ContentView: View {
                 print("error: \(error)")
             }
         }
+    }
+
+    private func stopGame() {
+        guard game.status == .running else {
+            return
+        }
+        showingStopConfirm = true
     }
 
     private func setValue(_ value: Int?) {
