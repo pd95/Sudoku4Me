@@ -22,12 +22,13 @@ func setLiveView(filename: String, comment: String, ciImage: CIImage, game: Sudo
                         .background(
                             Image(uiImage: uiImage)
                                 .resizable()
-                                .opacity(0.5)
+                                .colorMultiply(.white)
+                                .opacity(0.3)
                                 .padding(10)
                         )
                 }
             }
-            .frame(maxHeight: 600)
+            .frame(maxHeight: 700)
         )
     }
 }
