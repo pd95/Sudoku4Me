@@ -115,7 +115,9 @@ class SudokuGridReader: ObservableObject {
                 return
             }
 
-            guard let rectangles = request.results as? [VNRectangleObservation] else {
+            guard let rectangles = request.results as? [VNRectangleObservation],
+                    rectangles.isEmpty == false
+            else {
                 print("No rectangle detected")
                 detectionError = ProcessingError.noRectangleFound
                 return
