@@ -4,5 +4,6 @@
         <page name='Rectangle Detection'/>
         <page name='Text Detection'/>
         <page name='SudokuGame'/>
+        <page name='SudokuGridReader'/>
     </pages>
 </playground>
