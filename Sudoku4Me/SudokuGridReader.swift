@@ -25,7 +25,7 @@ class SudokuGridReader: ObservableObject {
         let isGood: Bool
     }
 
-    @Published var game = SudokuGame()
+    @Published var game: SudokuGame?
     @Published var gridImage: CIImage?
     @Published var cellDetails: [GridCellContent] = []
 
@@ -45,6 +45,7 @@ class SudokuGridReader: ObservableObject {
     }
 
     func process(image: CIImage) {
+        game = nil
         gridImage = nil
 
         // Setup image processing pipeline

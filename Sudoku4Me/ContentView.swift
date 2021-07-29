@@ -73,8 +73,8 @@ struct ContentView: View {
                 gridImage = reader.gridUIImage
             })
             .onChange(of: reader.game, perform: { newValue in
-                if game.status == .initial {
-                    game = newValue
+                if let newGame = newValue, game.status != .running {
+                    game = newGame
                     clearHighlightedCell()
                 }
             })
@@ -127,7 +127,7 @@ struct ContentView: View {
 
     private func newGame() {
         print("newGame")
-        resetGame(reader.game)
+        resetGame(reader.game ?? SudokuGame())
     }
 
     private func resetGame(_ game: SudokuGame) {
@@ -141,9 +141,14 @@ struct ContentView: View {
     private func processImage(_ image: UIImage?) {
         print("processImage")
         guard let image = image,
-              let ciimage = CIImage(image: image)
+              var ciimage = CIImage(image: image)
         else {
             return
+        }
+
+        // Make sure we fix the image orientation if it's not yet "up"
+        if image.imageOrientation != .up {
+            ciimage = ciimage.oriented(image.imageOrientation.cgOrientation)
         }
 
         resetGame(SudokuGame())
