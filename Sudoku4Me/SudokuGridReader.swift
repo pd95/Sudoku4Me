@@ -28,16 +28,32 @@ class SudokuGridReader: ObservableObject {
     @Published var game: SudokuGame?
     @Published var gridImage: CIImage?
     @Published var cellDetails: [GridCellContent] = []
+    @Published var error: ProcessingError?
 
     private let processingQueue = DispatchQueue(label: "Sudoku4Me.processingQueue")
     private var cancellable: AnyCancellable?
 
     enum ProcessingError: Error {
         case imageLoadingError
-        case detectionFailure(Error)
         case noRectangleFound
         case multipleRectanglesFound
         case failedToDetectRectangle
+        case genericError(Error)
+
+        var localizedDescription: String {
+            switch self {
+            case .imageLoadingError:
+                return "The image could not be load."
+            case .noRectangleFound:
+                return "No rectangle was found in the image."
+            case .multipleRectanglesFound:
+                return "Multiple rectangles have been detected in the image."
+            case .failedToDetectRectangle:
+                return "Unable to extract the grid image for the detected rectangle."
+            case .genericError(let error):
+                return error.localizedDescription
+            }
+        }
     }
 
     func process(data: Data) throws {
@@ -67,8 +83,16 @@ class SudokuGridReader: ObservableObject {
                 }
                 return game
             })
+            .mapError({ error in
+                error as? ProcessingError ?? ProcessingError.genericError(error)
+            })
             .sink { completion in
                 print("completion", completion)
+                if case .failure(let error) = completion {
+                    DispatchQueue.main.async {
+                        self.error = error
+                    }
+                }
             } receiveValue: { result in
                 print("receiveValue", result)
             }
@@ -111,7 +135,7 @@ class SudokuGridReader: ObservableObject {
             print("handleDetectedRectangles:")
             if let error = error {
                 print("error while detecting rectangles: \(error.localizedDescription)")
-                detectionError = ProcessingError.detectionFailure(error)
+                detectionError = ProcessingError.genericError(error)
                 return
             }
 

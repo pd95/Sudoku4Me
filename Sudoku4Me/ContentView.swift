@@ -13,6 +13,8 @@ struct ContentView: View {
     @State private var highlightedColumn: Int?
     @State private var showingStopConfirm = false
 
+    @State private var showingErrorMessage = false
+
     @State private var showingImagePickerWithSource: UIImagePickerController.SourceType?
     @State private var selectedImage: UIImage?
     @StateObject private var reader = SudokuGridReader()
@@ -65,6 +67,9 @@ struct ContentView: View {
                       primaryButton: .default(Text("OK"), action: newGame),
                       secondaryButton: .cancel())
             }
+            .alert(isPresented: $showingErrorMessage, content: {
+                Alert(title: Text("An error occured"), message: Text(reader.error?.localizedDescription ?? "Unknown error"), dismissButton: .cancel())
+            })
             .sheet(item: $showingImagePickerWithSource, content: { sourceType in
                 ImagePicker(sourceType: sourceType, allowsEditing: true, image: $selectedImage)
             })
@@ -76,6 +81,11 @@ struct ContentView: View {
                 if let newGame = newValue, game.status != .running {
                     game = newGame
                     clearHighlightedCell()
+                }
+            })
+            .onReceive(reader.$error, perform: { error in
+                if error != nil {
+                    showingErrorMessage = true
                 }
             })
             .navigationTitle("Sudoku!")
