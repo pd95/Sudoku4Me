@@ -67,9 +67,6 @@ struct ContentView: View {
                       primaryButton: .default(Text("OK"), action: newGame),
                       secondaryButton: .cancel())
             }
-            .alert(isPresented: $showingErrorMessage, content: {
-                Alert(title: Text("An error occured"), message: Text(reader.error?.localizedDescription ?? "Unknown error"), dismissButton: .cancel())
-            })
             .sheet(item: $showingImagePickerWithSource, content: { sourceType in
                 ImagePicker(sourceType: sourceType, allowsEditing: true, image: $selectedImage)
             })
@@ -128,6 +125,9 @@ struct ContentView: View {
                 }
             }
         }
+        .alert(isPresented: $showingErrorMessage, content: {
+            Alert(title: Text("An error occured"), message: Text(reader.error?.localizedDescription ?? "Unknown error"), dismissButton: .cancel())
+        })
     }
 
     private func clearHighlightedCell() {
