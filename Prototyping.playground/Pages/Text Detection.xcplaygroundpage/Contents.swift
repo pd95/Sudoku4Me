@@ -101,7 +101,7 @@ func detectTextIn(_ image: CIImage) {
                 if let box = try? candidateText.boundingBox(for: text.startIndex..<text.endIndex) {
 
                     image.cropped(to: currentCell.rect)
-                    let isGood = (0.10...0.45).contains(box.boundingBox.size.width)
+                    let isGood = (0.10...0.75).contains(box.boundingBox.size.width)
                               && (0.3...0.8).contains(box.boundingBox.size.height)
 
                     var valueString = text[text.startIndex..<text.endIndex]
@@ -129,7 +129,6 @@ func detectTextIn(_ image: CIImage) {
             }
         }
     }
-    recognizeTextRequest.recognitionLanguages = ["de"]
     recognizeTextRequest.recognitionLevel = .fast
     recognizeTextRequest.usesLanguageCorrection = false
     //recognizeTextRequest.minimumTextHeight = 0.5
@@ -137,13 +136,16 @@ func detectTextIn(_ image: CIImage) {
     for y in 0..<9 {
         for x in 0..<9 {
             let point = CGPoint(x: CGFloat(x)*cellWidth+border/2, y: CGFloat(y)*cellHeight+border/2)
-            let rect = CGRect(origin: point, size: cellSize)
+            let rect = CGRect(origin: point, size: cellSize).insetBy(dx: cellWidth/10, dy: cellHeight/10)
             currentCell = (x, y, rect)
 
-            recognizeTextRequest.regionOfInterest = CGRect(x: point.x / size.width,
-                                                           y: point.y / size.height,
-                                                           width: cellSize.width / size.width,
-                                                           height: cellSize.height / size.height)
+            // Convert to a Vision ROI
+            recognizeTextRequest.regionOfInterest = CGRect(
+                x: rect.origin.x / size.width,
+                y: rect.origin.y / size.height,
+                width: rect.size.width / size.width,
+                height: rect.size.height / size.height
+            )
 
             do {
                 try requestHandler.perform([recognizeTextRequest])
