@@ -66,7 +66,7 @@ struct ContentView: View {
                       secondaryButton: .cancel())
             }
             .sheet(item: $showingImagePickerWithSource, content: { sourceType in
-                ImagePicker(sourceType: sourceType, image: $selectedImage)
+                ImagePicker(sourceType: sourceType, allowsEditing: true, image: $selectedImage)
             })
             .onChange(of: selectedImage, perform: processImage)
             .onChange(of: reader.gridImage, perform: { _ in

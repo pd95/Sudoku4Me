@@ -18,7 +18,8 @@ struct ImagePicker: UIViewControllerRepresentable {
 
     @Environment(\.presentationMode) var presentationMode
 
-    let sourceType: UIImagePickerController.SourceType
+    var sourceType: UIImagePickerController.SourceType
+    var allowsEditing: Bool = false
     @Binding var image: UIImage?
 
 
@@ -27,6 +28,7 @@ struct ImagePicker: UIViewControllerRepresentable {
         if UIImagePickerController.isSourceTypeAvailable(sourceType) {
             imagePicker.sourceType = sourceType
         }
+        imagePicker.allowsEditing = allowsEditing
         imagePicker.delegate = context.coordinator
 
         return imagePicker
