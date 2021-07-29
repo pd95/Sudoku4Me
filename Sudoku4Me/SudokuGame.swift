@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SudokuGame {
+struct SudokuGame: Hashable {
     static let positionRange = 0..<length
     static let valueRange = 1...9
 
@@ -41,12 +41,12 @@ struct SudokuGame {
     typealias GridPosition = (x: Int, y: Int)
     typealias GridValue = Int?
 
-    struct Cell {
+    struct Cell: Hashable {
         var value: GridValue = nil
         var editable: Bool = true
     }
 
-    enum GameStatus {
+    enum GameStatus: Hashable {
         case initial
         case running
         case done

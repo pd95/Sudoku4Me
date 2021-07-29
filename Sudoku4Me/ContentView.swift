@@ -13,6 +13,11 @@ struct ContentView: View {
     @State private var highlightedColumn: Int?
     @State private var showingStopConfirm = false
 
+    @State private var showingImagePickerWithSource: UIImagePickerController.SourceType?
+    @State private var selectedImage: UIImage?
+    @StateObject private var reader = SudokuGridReader()
+    @State private var gridImage: UIImage?
+
     var allowedValues: Set<Int>? {
         guard game.status == .running else { return nil }
 
@@ -29,10 +34,18 @@ struct ContentView: View {
             VStack {
 
                 SudokuGridView(
-                    game: game,
-                    highlightedRow: $highlightedRow,
-                    highlightedColumn: $highlightedColumn
-                )
+                        game: game,
+                        highlightedRow: $highlightedRow,
+                        highlightedColumn: $highlightedColumn
+                    )
+                    .background(Group {
+                        if let image = gridImage {
+                            Image(uiImage: image)
+                                .resizable()
+                                .opacity(game.status == .initial ? 0.3 : 0)
+                                .padding(-5)
+                        }
+                    })
 
                 if game.status == .done {
                     Text("Well done!")
@@ -52,6 +65,19 @@ struct ContentView: View {
                       primaryButton: .default(Text("OK"), action: newGame),
                       secondaryButton: .cancel())
             }
+            .sheet(item: $showingImagePickerWithSource, content: { sourceType in
+                ImagePicker(sourceType: sourceType, image: $selectedImage)
+            })
+            .onChange(of: selectedImage, perform: processImage)
+            .onChange(of: reader.gridImage, perform: { _ in
+                gridImage = reader.gridUIImage
+            })
+            .onChange(of: reader.game, perform: { newValue in
+                if game.status == .initial {
+                    game = newValue
+                    clearHighlightedCell()
+                }
+            })
             .navigationTitle("Sudoku!")
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -72,8 +98,21 @@ struct ContentView: View {
                 }
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     if game.status == .initial {
-                        Button(action: scanPuzzle) {
-                            Image(systemName: "camera")
+                        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                            Button(action: {
+                                showingImagePickerWithSource = .camera
+                            }) {
+                                Image(systemName: "camera")
+                                    .imageScale(.large)
+                            }
+                        }
+                        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+                            Button(action: {
+                                showingImagePickerWithSource = .photoLibrary
+                            }) {
+                                Image(systemName: "photo")
+                                    .imageScale(.large)
+                            }
                         }
                     }
                 }
@@ -81,17 +120,44 @@ struct ContentView: View {
         }
     }
 
-    private func newGame() {
-        game = .init()
+    private func clearHighlightedCell() {
         highlightedColumn = nil
         highlightedRow = nil
     }
 
-    private func scanPuzzle() {
+    private func newGame() {
+        print("newGame")
+        resetGame(reader.game)
+    }
+
+    private func resetGame(_ game: SudokuGame) {
+        print("resetGame")
+        withAnimation(.default) {
+            self.game = game
+            clearHighlightedCell()
+        }
+    }
+
+    private func processImage(_ image: UIImage?) {
+        print("processImage")
+        guard let image = image,
+              let ciimage = CIImage(image: image)
+        else {
+            return
+        }
+
+        resetGame(SudokuGame())
+        reader.process(image: ciimage)
     }
 
     private func startGame() {
+        print("startGame")
+
+        // Make a copy if the game state
+        reader.game = game
+
         withAnimation(.default) {
+            clearHighlightedCell()
             do {
                 try game.start()
             } catch {

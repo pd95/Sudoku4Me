@@ -13,6 +13,8 @@
 		173669F426A5CFD2008ACC88 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 173669F326A5CFD2008ACC88 /* Preview Assets.xcassets */; };
 		174ABD2C26B06F43008779CE /* SudokuGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 174ABD2B26B06F43008779CE /* SudokuGridView.swift */; };
 		174F24E226B16F8400BE445D /* SudokuGridReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 174F24E126B16F8400BE445D /* SudokuGridReader.swift */; };
+		174F24E426B2DF4400BE445D /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 174F24E326B2DF4400BE445D /* ImagePicker.swift */; };
+		174F24E726B310A800BE445D /* SudokuGridReader+UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 174F24E626B310A800BE445D /* SudokuGridReader+UIImage.swift */; };
 		178DECC526AD8DC3000410D0 /* SudokuGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178DECC426AD8DC3000410D0 /* SudokuGame.swift */; };
 		17C5316E26ADC4A3001EDE9E /* SudokuCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C5316D26ADC4A3001EDE9E /* SudokuCellView.swift */; };
 		17C5317026ADC63B001EDE9E /* CustomKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C5316F26ADC63B001EDE9E /* CustomKeyboard.swift */; };
@@ -27,6 +29,9 @@
 		173669FA26A5D101008ACC88 /* Prototyping.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Prototyping.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		174ABD2B26B06F43008779CE /* SudokuGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuGridView.swift; sourceTree = "<group>"; };
 		174F24E126B16F8400BE445D /* SudokuGridReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuGridReader.swift; sourceTree = "<group>"; };
+		174F24E326B2DF4400BE445D /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		174F24E526B2EF1000BE445D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		174F24E626B310A800BE445D /* SudokuGridReader+UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SudokuGridReader+UIImage.swift"; sourceTree = "<group>"; };
 		178DECC426AD8DC3000410D0 /* SudokuGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuGame.swift; sourceTree = "<group>"; };
 		17C5316D26ADC4A3001EDE9E /* SudokuCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuCellView.swift; sourceTree = "<group>"; };
 		17C5316F26ADC63B001EDE9E /* CustomKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomKeyboard.swift; sourceTree = "<group>"; };
@@ -63,10 +68,13 @@
 		173669EB26A5CFD2008ACC88 /* Sudoku4Me */ = {
 			isa = PBXGroup;
 			children = (
+				174F24E526B2EF1000BE445D /* Info.plist */,
 				173669EC26A5CFD2008ACC88 /* Sudoku4MeApp.swift */,
 				178DECC426AD8DC3000410D0 /* SudokuGame.swift */,
 				174F24E126B16F8400BE445D /* SudokuGridReader.swift */,
+				174F24E626B310A800BE445D /* SudokuGridReader+UIImage.swift */,
 				173669EE26A5CFD2008ACC88 /* ContentView.swift */,
+				174F24E326B2DF4400BE445D /* ImagePicker.swift */,
 				174ABD2B26B06F43008779CE /* SudokuGridView.swift */,
 				17C5316D26ADC4A3001EDE9E /* SudokuCellView.swift */,
 				17C5316F26ADC63B001EDE9E /* CustomKeyboard.swift */,
@@ -159,6 +167,8 @@
 				17C5316E26ADC4A3001EDE9E /* SudokuCellView.swift in Sources */,
 				174F24E226B16F8400BE445D /* SudokuGridReader.swift in Sources */,
 				174ABD2C26B06F43008779CE /* SudokuGridView.swift in Sources */,
+				174F24E426B2DF4400BE445D /* ImagePicker.swift in Sources */,
+				174F24E726B310A800BE445D /* SudokuGridReader+UIImage.swift in Sources */,
 				173669EF26A5CFD2008ACC88 /* ContentView.swift in Sources */,
 				173669ED26A5CFD2008ACC88 /* Sudoku4MeApp.swift in Sources */,
 			);
@@ -294,6 +304,8 @@
 				DEVELOPMENT_TEAM = P8CC95REUG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Sudoku4Me/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Allow taking a photo of a Sudoku puzzle.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -324,6 +336,8 @@
 				DEVELOPMENT_TEAM = P8CC95REUG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Sudoku4Me/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Allow taking a photo of a Sudoku puzzle.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
