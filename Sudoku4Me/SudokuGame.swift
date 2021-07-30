@@ -38,7 +38,7 @@ struct SudokuGame: Hashable {
         7,4,9,1,3,2,8,6,5,
     ])
 
-    typealias GridPosition = (x: Int, y: Int)
+    typealias GridPosition = (column: Int, row: Int)
     typealias GridValue = Int?
 
     struct Cell: Hashable {
@@ -71,10 +71,10 @@ struct SudokuGame: Hashable {
 
     init(initialGrid grid: [Int?]) throws {
         self.init()
-        for y in Self.positionRange {
-            for x in Self.positionRange {
-                if let value = grid[y*Self.length + x], Self.valueRange.contains(value) {
-                    try set(at: (x,y), value: value)
+        for row in Self.positionRange {
+            for column in Self.positionRange {
+                if let value = grid[row*Self.length + column], Self.valueRange.contains(value) {
+                    try set(at: (column,row), value: value)
                 }
             }
         }
@@ -83,7 +83,7 @@ struct SudokuGame: Hashable {
 
     // MARK: - Accessors
     func cell(at position: GridPosition) -> Cell {
-        grid[position.y * Self.length + position.x]
+        grid[position.row * Self.length + position.column]
     }
 
     func value(at position: GridPosition) -> GridValue {
@@ -92,8 +92,8 @@ struct SudokuGame: Hashable {
 
     mutating func set(at position: GridPosition, value: GridValue) throws {
 
-        if     Self.positionRange.contains(position.x) == false
-            || Self.positionRange.contains(position.y) == false {
+        if     Self.positionRange.contains(position.column) == false
+            || Self.positionRange.contains(position.row) == false {
             throw GameError.invalidPosition(position)
         }
 
@@ -101,7 +101,7 @@ struct SudokuGame: Hashable {
             throw GameError.invalidValue(value)
         }
 
-        let offset = position.y * Self.length + position.x
+        let offset = position.row * Self.length + position.column
         if status == .running {
             if grid[offset].editable == false {
                 throw GameError.cellNotEditable
@@ -115,9 +115,9 @@ struct SudokuGame: Hashable {
     }
 
     func allowedValues(for position: GridPosition) -> Set<Int> {
-        let setValues = gridRow(at: position.y)
-            + gridColumn(at: position.x)
-            + gridRegion(xRegion: position.x/SudokuGame.regionlength, yRegion: position.y/SudokuGame.regionlength)
+        let setValues = gridRow(at: position.row)
+            + gridColumn(at: position.column)
+            + gridRegion(xRegion: position.column/SudokuGame.regionlength, yRegion: position.row/SudokuGame.regionlength)
 
         let validValues = Set(SudokuGame.valueRange).symmetricDifference(setValues.compactMap({$0}))
         print("remaining", validValues)
@@ -204,8 +204,8 @@ struct SudokuGame: Hashable {
     private func gridColumn(at index: Int) -> [GridValue] {
         var array = [GridValue](repeating: nil, count: Self.length)
 
-        for y in Self.positionRange {
-            array[y] = grid[y * Self.length + index].value
+        for row in Self.positionRange {
+            array[row] = grid[row * Self.length + index].value
         }
 
         return array
@@ -218,12 +218,12 @@ struct SudokuGame: Hashable {
     private func gridRegion(xRegion: Int, yRegion: Int) -> [GridValue] {
         var array = [GridValue]()
 
-        let xRange = Self.positionRange[xRegion * Self.regionlength ..< xRegion * Self.regionlength + Self.regionlength]
-        let yRange = Self.positionRange[yRegion * Self.regionlength ..< yRegion * Self.regionlength + Self.regionlength]
+        let columnRange = Self.positionRange[xRegion * Self.regionlength ..< xRegion * Self.regionlength + Self.regionlength]
+        let rowRange = Self.positionRange[yRegion * Self.regionlength ..< yRegion * Self.regionlength + Self.regionlength]
 
-        for y in yRange {
-            for x in xRange {
-                array.append(grid[y * Self.length + x].value)
+        for row in rowRange {
+            for column in columnRange {
+                array.append(grid[row * Self.length + column].value)
             }
         }
 

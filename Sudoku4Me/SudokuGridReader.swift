@@ -196,7 +196,7 @@ class SudokuGridReader: ObservableObject {
         let requestHandler = VNImageRequestHandler(ciImage: gridImage, options: [:])
 
         var gridCellContent = [GridCellContent]()
-        var currentCell: (x: Int, y: Int, rect: CGRect) = (-1, -1, .zero)
+        var currentCell: (column: Int, row: Int, rect: CGRect) = (-1, -1, .zero)
 
         let recognizeTextRequest = VNRecognizeTextRequest { (request: VNRequest, error: Error?) in
             guard let results = request.results as? [VNRecognizedTextObservation] else {
@@ -213,7 +213,7 @@ class SudokuGridReader: ObservableObject {
                                   && (0.3...0.8).contains(box.boundingBox.size.height)
 
                         var valueString = text[text.startIndex..<text.endIndex]
-                        print(currentCell.x, currentCell.y, ":", valueString, box.boundingBox.size, isGood ? "🟢" : "🔴")
+                        print(currentCell.column, currentCell.row, ":", valueString, box.boundingBox.size, isGood ? "🟢" : "🔴")
 
                         if !isGood {
                             usleep(200000)
@@ -227,14 +227,14 @@ class SudokuGridReader: ObservableObject {
                             }
                             if let value = Int(valueString) {
                                 do {
-                                    try game.set(at: (currentCell.x, 8-currentCell.y), value: value)
+                                    try game.set(at: (currentCell.column, 8-currentCell.row), value: value)
                                 } catch {
                                     print(error)
                                 }
                             }
                         }
                         let cellContent = GridCellContent(
-                            row: 8-currentCell.y, column: currentCell.x,
+                            row: 8-currentCell.row, column: currentCell.column,
                             gridRect: currentCell.rect,
                             textRectangle: box,
                             text: String(text[text.startIndex..<text.endIndex]),
@@ -251,11 +251,11 @@ class SudokuGridReader: ObservableObject {
         recognizeTextRequest.usesLanguageCorrection = false
         //recognizeTextRequest.minimumTextHeight = 0.5
 
-        for y in 0..<9 {
-            for x in 0..<9 {
-                let point = CGPoint(x: CGFloat(x)*cellWidth+border/2, y: CGFloat(y)*cellHeight+border/2)
+        for row in 0..<9 {
+            for column in 0..<9 {
+                let point = CGPoint(x: CGFloat(column)*cellWidth+border/2, y: CGFloat(row)*cellHeight+border/2)
                 let rect = CGRect(origin: point, size: cellSize).insetBy(dx: cellWidth/10, dy: cellHeight/10)
-                currentCell = (x, y, rect)
+                currentCell = (column, row, rect)
 
                 // Convert to a Vision ROI
                 recognizeTextRequest.regionOfInterest = CGRect(

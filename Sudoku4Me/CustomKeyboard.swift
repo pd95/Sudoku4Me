@@ -20,10 +20,10 @@ struct CustomKeyboard: View {
 
     var body: some View {
         VStack(spacing: Self.spacing) {
-            ForEach(0..<3) { y in
+            ForEach(0..<3) { row in
                 HStack(spacing: Self.spacing) {
-                    ForEach(0..<3) { x in
-                        let value = 1 + x + y * 3
+                    ForEach(0..<3) { column in
+                        let value = 1 + column + row * 3
                         Button(action: { tapAction(value) }) {
                             Text(String(value))
                                 .font(.title2.bold())

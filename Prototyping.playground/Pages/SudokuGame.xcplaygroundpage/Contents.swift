@@ -44,20 +44,20 @@ print("remainingValues", remainingValues)
 let valuePositions = game.valuePositions[6, default:[]]
 print("valuePositions",valuePositions)
 
-let (cols, rows): (columns: [Int], rows: [Int]) = valuePositions.reduce(into: (columns: [Int](), rows: [Int]())) { partialResult, position in
-    if partialResult.columns.contains(position.x) == false {
-        partialResult.columns.append(position.x)
+let (cols, rows): (columns: Set<Int>, rows: Set<Int>) = valuePositions.reduce(into: (columns: Set<Int>(), rows: Set<Int>())) { partialResult, position in
+    if partialResult.columns.contains(position.column) == false {
+        partialResult.columns.insert(position.column)
     }
-    if partialResult.rows.contains(position.y) == false {
-        partialResult.rows.append(position.y)
+    if partialResult.rows.contains(position.row) == false {
+        partialResult.rows.insert(position.row)
     }
 }
-print("  columns", cols)
-print("  rows", rows)
+print("  columns", cols.sorted())
+print("  rows", rows.sorted())
 
 
 // Check valid values for a position
-var position: SudokuGame.GridPosition = (x: 7, y: 8)
+var position: SudokuGame.GridPosition = (column: 7, row: 8)
 let allowedValue = game.allowedValues(for: position)
 
 // Set the value

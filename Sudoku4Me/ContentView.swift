@@ -189,14 +189,14 @@ struct ContentView: View {
     }
 
     private func setValue(_ value: Int?) {
-        guard let x = highlightedColumn,
-              let y = highlightedRow
+        guard let column = highlightedColumn,
+              let row = highlightedRow
         else {
             return
         }
         withAnimation {
             do {
-                try game.set(at: (x, y), value: value)
+                try game.set(at: (column, row), value: value)
                 game.checkDone()
             } catch {
                 print("error: \(error)")

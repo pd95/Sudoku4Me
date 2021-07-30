@@ -41,27 +41,27 @@ struct SudokuGridView: View {
     }
 
     private func gridCells() -> some View {
-        ForEach(0..<9) { y in
-            ForEach(0..<9) { x in
+        ForEach(0..<9) { row in
+            ForEach(0..<9) { column in
                 SudokuCellView(
-                    cell: game.cell(at: (x,y)),
-                    isHighlighted: highlightedRow == y || highlightedColumn == x,
+                    cell: game.cell(at: (column, row)),
+                    isHighlighted: highlightedRow == row || highlightedColumn == column,
                     tapAction: {
-                        hightlightCell(x,y)
+                        hightlightCell(column, row)
                     }
                 )
             }
         }
     }
 
-    private func hightlightCell(_ x: Int, _ y: Int) {
-        if x == highlightedColumn && y == highlightedRow {
+    private func hightlightCell(_ column: Int, _ row: Int) {
+        if column == highlightedColumn && row == highlightedRow {
             highlightedRow = nil
             highlightedColumn = nil
         }
         else {
-            highlightedRow = y
-            highlightedColumn = x
+            highlightedRow = row
+            highlightedColumn = column
         }
     }
 }
