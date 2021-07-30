@@ -34,10 +34,15 @@ guard var game = try? SudokuGame(initialGrid: exampleComplete) else {
 try game.start()
 print(game)
 
+let remainingValues = game.valueCounts
+    .map({ (value: $0.key, count: $0.value)})
+    .sorted(by: {$0.value < $1.value })
+    .filter({ $0.count < 9 })
+print("remainingValues", remainingValues)
 
 // Check valid values for a position
 var position: SudokuGame.GridPosition = (x: 7, y: 8)
-_ = game.allowedValues(for: position)
+let allowedValue = game.allowedValues(for: position)
 
 // Set the value
 try? game.set(at: position, value: 6)
@@ -47,8 +52,5 @@ print(game)
 _ = game.allowedValues(for: position)
 
 game.checkDone()
-print(game)
-
-
 
 //: [Next](@next)
