@@ -125,6 +125,15 @@ struct SudokuGame: Hashable {
         return validValues
     }
 
+    var valueCounts: [Int: Int] {
+        let valueCounts = grid.reduce(into: [Int:Int]()) { partialResult, cell in
+            if let value = cell.value {
+                partialResult[value, default: 0] += 1
+            }
+        }
+        return valueCounts
+    }
+
     // MARK: - Game status
 
     mutating func start() throws {
