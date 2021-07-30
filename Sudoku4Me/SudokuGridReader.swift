@@ -227,14 +227,14 @@ class SudokuGridReader: ObservableObject {
                             }
                             if let value = Int(valueString) {
                                 do {
-                                    try game.set(at: (currentCell.column, 8-currentCell.row), value: value)
+                                    try game.set(at: (currentCell.column, currentCell.row), value: value)
                                 } catch {
                                     print(error)
                                 }
                             }
                         }
                         let cellContent = GridCellContent(
-                            row: 8-currentCell.row, column: currentCell.column,
+                            row: currentCell.row, column: currentCell.column,
                             gridRect: currentCell.rect,
                             textRectangle: box,
                             text: String(text[text.startIndex..<text.endIndex]),
@@ -253,7 +253,7 @@ class SudokuGridReader: ObservableObject {
 
         for row in 0..<9 {
             for column in 0..<9 {
-                let point = CGPoint(x: CGFloat(column)*cellWidth+border/2, y: CGFloat(row)*cellHeight+border/2)
+                let point = CGPoint(x: CGFloat(column)*cellWidth+border/2, y: CGFloat(8-row)*cellHeight+border/2)
                 let rect = CGRect(origin: point, size: cellSize).insetBy(dx: cellWidth/10, dy: cellHeight/10)
                 currentCell = (column, row, rect)
 
