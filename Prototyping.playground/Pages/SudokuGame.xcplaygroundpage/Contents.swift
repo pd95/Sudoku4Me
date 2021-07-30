@@ -40,6 +40,22 @@ let remainingValues = game.valueCounts
     .filter({ $0.count < 9 })
 print("remainingValues", remainingValues)
 
+// Show all positions where a specific value is placed:
+let valuePositions = game.valuePositions[6, default:[]]
+print("valuePositions",valuePositions)
+
+let (cols, rows): (columns: [Int], rows: [Int]) = valuePositions.reduce(into: (columns: [Int](), rows: [Int]())) { partialResult, position in
+    if partialResult.columns.contains(position.x) == false {
+        partialResult.columns.append(position.x)
+    }
+    if partialResult.rows.contains(position.y) == false {
+        partialResult.rows.append(position.y)
+    }
+}
+print("  columns", cols)
+print("  rows", rows)
+
+
 // Check valid values for a position
 var position: SudokuGame.GridPosition = (x: 7, y: 8)
 let allowedValue = game.allowedValues(for: position)

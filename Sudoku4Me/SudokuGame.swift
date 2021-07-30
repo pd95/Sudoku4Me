@@ -134,6 +134,17 @@ struct SudokuGame: Hashable {
         return valueCounts
     }
 
+    var valuePositions: [Int: [GridPosition]] {
+        let valuePositions = grid.enumerated()
+            .reduce(into: [Int:[GridPosition]]()) { (partialResult, element) in
+                let (index, cell) = element
+                if let value = cell.value {
+                    partialResult[value, default: []].append((index % Self.length, index / Self.length))
+                }
+        }
+        return valuePositions
+    }
+
     // MARK: - Game status
 
     mutating func start() throws {
