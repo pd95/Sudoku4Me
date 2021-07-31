@@ -33,7 +33,7 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView {
-            VStack {
+            AdaptiveVStack {
 
                 SudokuGridView(
                         game: game,
@@ -57,6 +57,7 @@ struct ContentView: View {
                 else {
                     CustomKeyboard(tapAction: setValue, values: allowedValues)
                         .transition(.move(edge: .bottom))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
             .frame(maxHeight: .infinity, alignment: .top)

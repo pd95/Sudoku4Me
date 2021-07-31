@@ -14,30 +14,31 @@ struct SudokuGridView: View {
     @Binding var highlightedColumn: Int?
 
     let columns: [GridItem] = SudokuGame.positionRange.map({ _ in
-        GridItem(.flexible(minimum: 30, maximum: 44), spacing: 0)
+        GridItem(.flexible(minimum: 3, maximum: 44), spacing: 0)
     })
 
     var body: some View {
-        LazyVGrid(
-            columns: columns,
-            spacing: 0,
-            content: gridCells
-        )
-        .overlay(GeometryReader{ proxy in
-            let width = proxy.size.width/3
-            let height = proxy.size.height/3
-            VStack(spacing: 0) {
-                ForEach(0..<3) { _ in
-                    HStack(spacing: 0) {
-                        ForEach(0..<3) { _ in
-                            Rectangle()
-                                .stroke(lineWidth: 3)
-                                .frame(width: width, height: height)
+        GeometryReader { proxy in
+            LazyVGrid(
+                columns: columns,
+                spacing: 0,
+                content: gridCells
+            )
+            .overlay(
+                VStack(spacing: 0) {
+                    ForEach(0..<3) { _ in
+                        HStack(spacing: 0) {
+                            ForEach(0..<3) { _ in
+                                Rectangle()
+                                    .stroke(lineWidth: 3)
+                            }
                         }
                     }
                 }
-            }
-        })
+            )
+        }
+        .aspectRatio(1, contentMode: .fit)
+        .frame(minHeight: 150)
     }
 
     private func gridCells() -> some View {
@@ -77,6 +78,7 @@ struct SudokuGridView_Previews: PreviewProvider {
                            highlightedRow: .constant(1),
                            highlightedColumn: .constant(8))
         }
+        //.frame(maxHeight: 250)
         .padding()
         .previewLayout(.sizeThatFits)
     }
