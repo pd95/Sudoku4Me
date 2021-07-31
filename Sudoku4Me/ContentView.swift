@@ -68,8 +68,8 @@ struct ContentView: View {
                       primaryButton: .default(Text("OK"), action: newGame),
                       secondaryButton: .cancel())
             }
-            .sheet(item: $showingImagePickerWithSource, content: { sourceType in
-                ImagePicker(sourceType: sourceType, allowsEditing: sourceType == .photoLibrary, image: $selectedImage)
+            .fullScreenCover(item: $showingImagePickerWithSource, content: { sourceType in
+                ImagePicker(sourceType: sourceType, allowsEditing: false, image: $selectedImage)
                     .ignoresSafeArea()
             })
             .onChange(of: selectedImage, perform: processImage)
