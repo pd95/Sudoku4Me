@@ -254,7 +254,7 @@ class SudokuGridReader: ObservableObject {
         for row in 0..<9 {
             for column in 0..<9 {
                 let point = CGPoint(x: CGFloat(column)*cellWidth+border/2, y: CGFloat(8-row)*cellHeight+border/2)
-                let rect = CGRect(origin: point, size: cellSize).insetBy(dx: cellWidth/10, dy: cellHeight/10)
+                let rect = CGRect(origin: point, size: cellSize).insetBy(dx: cellWidth/20, dy: cellHeight/20)
                 currentCell = (column, row, rect)
 
                 // Convert to a Vision ROI
