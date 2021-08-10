@@ -25,19 +25,22 @@ class SudokuGridReader: ObservableObject {
         let isGood: Bool
     }
 
-    @Published var game: SudokuGame?
+    @Published var inputImage: CIImage = CIImage()
+    @Published var rectangleObservation: [CGPoint] = []
     @Published var gridImage: CIImage?
     @Published var cellDetails: [GridCellContent] = []
     @Published var error: ProcessingError?
+    @Published var game: SudokuGame = SudokuGame()
 
     private let processingQueue = DispatchQueue(label: "Sudoku4Me.processingQueue")
-    private var cancellable: AnyCancellable?
+    private var cancellables = Set<AnyCancellable>()
 
     enum ProcessingError: Error {
         case imageLoadingError
         case noRectangleFound
         case multipleRectanglesFound
         case failedToDetectRectangle
+        case failedToFixRectanglePerspective
         case genericError(Error)
 
         var localizedDescription: String {
@@ -49,10 +52,60 @@ class SudokuGridReader: ObservableObject {
             case .multipleRectanglesFound:
                 return "Multiple rectangles have been detected in the image."
             case .failedToDetectRectangle:
-                return "Unable to extract the grid image for the detected rectangle."
+                return "Unable to properly detect a rectangle."
+            case .failedToFixRectanglePerspective:
+                return "Unable to create grid image for the detected rectangle."
             case .genericError(let error):
                 return error.localizedDescription
             }
+        }
+    }
+
+    init() {
+        // Setup image processing pipeline
+        $inputImage
+            .dropFirst()
+            .receive(on: processingQueue)
+            .map(scaleImage)
+            .tryMap(detectRectangle)
+            .mapError(mapProcessingError)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: persistError) { [weak self] (image, points) in
+                self?.rectangleObservation = points
+            }
+            .store(in: &cancellables)
+
+        Publishers.CombineLatest($inputImage, $rectangleObservation)
+            .filter({ (image: CIImage, points: [CGPoint]) in
+                !points.isEmpty && points.count == 4
+                && image.extent.width > 100 && image.extent.height > 100
+            })
+            .tryMap(fixImagePerspective)
+            .map({ [weak self] image in
+                DispatchQueue.main.async {
+                    self?.gridImage = image
+                }
+                return image
+            })
+            .tryMap(detectTextInCells)
+            .mapError(mapProcessingError)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: persistError) { [weak self] (game, gridCells) in
+                print("received game", game)
+                self?.game = game
+                self?.cellDetails = gridCells
+            }
+            .store(in: &cancellables)
+    }
+
+    private func mapProcessingError(_ error: Error) -> ProcessingError {
+        error as? ProcessingError ?? ProcessingError.genericError(error)
+    }
+
+    private func persistError(_ completion: Subscribers.Completion<ProcessingError>) {
+        if case .failure(let error) = completion {
+            print("Error while processing", error.localizedDescription)
+            self.error = error
         }
     }
 
@@ -61,41 +114,11 @@ class SudokuGridReader: ObservableObject {
     }
 
     func process(image: CIImage) {
-        game = nil
+        inputImage = image
+        rectangleObservation = []
         gridImage = nil
-
-        // Setup image processing pipeline
-        cancellable = Just(image)
-            .receive(on: processingQueue)
-            .map(scaleImage)
-            .tryMap(detectRectangle)
-            .map({ image in
-                DispatchQueue.main.async {
-                    self.gridImage = image
-                }
-                return image
-            })
-            .tryMap(detectTextInCells)
-            .map({ (game, gridContent) in
-                DispatchQueue.main.async {
-                    self.game = game
-                    self.cellDetails = gridContent
-                }
-                return game
-            })
-            .mapError({ error in
-                error as? ProcessingError ?? ProcessingError.genericError(error)
-            })
-            .sink { completion in
-                print("completion", completion)
-                if case .failure(let error) = completion {
-                    DispatchQueue.main.async {
-                        self.error = error
-                    }
-                }
-            } receiveValue: { result in
-                print("receiveValue", result)
-            }
+        cellDetails = []
+        game = SudokuGame()
     }
 
     private func loadImage(_ data: Data) throws -> CIImage {
@@ -124,10 +147,10 @@ class SudokuGridReader: ObservableObject {
         return resultImage
     }
 
-    private func detectRectangle(_ image: CIImage) throws -> CIImage {
-        var gridImage: CIImage? = nil
+    private func detectRectangle(_ image: CIImage) throws -> (CIImage, [CGPoint]) {
+        print("detectRectangle", image)
+        var rectangleObservation: VNRectangleObservation? = nil
         var detectionError: ProcessingError? = nil
-        let size = image.extent.size
 
         // Request handler to detect the rectangle of the puzzle
         let requestHandler = VNImageRequestHandler(ciImage: image, options: [.ciContext: context])
@@ -153,16 +176,7 @@ class SudokuGridReader: ObservableObject {
                 return
             }
 
-            // Fix perspective to focus on our single rectangle
-            let scaleTransform = CGAffineTransform(scaleX: size.width, y: size.height)
-            let filter = CIFilter.perspectiveCorrection()
-            filter.inputImage = image
-            filter.topLeft = rectangle.topLeft.applying(scaleTransform)
-            filter.topRight = rectangle.topRight.applying(scaleTransform)
-            filter.bottomLeft = rectangle.bottomLeft.applying(scaleTransform)
-            filter.bottomRight = rectangle.bottomRight.applying(scaleTransform)
-
-            gridImage = filter.outputImage!
+            rectangleObservation = rectangle
         }
 
         rectDetectRequest.minimumAspectRatio = 0.8
@@ -174,10 +188,35 @@ class SudokuGridReader: ObservableObject {
             throw detectionError
         }
 
-        guard let gridImage = gridImage else {
+        guard let rectangleObservation = rectangleObservation else {
             throw ProcessingError.failedToDetectRectangle
         }
 
+        return (image, [rectangleObservation.topLeft, rectangleObservation.bottomLeft, rectangleObservation.bottomRight, rectangleObservation.topRight])
+    }
+
+    private func fixImagePerspective(_ image: CIImage, points: [CGPoint]) throws -> CIImage {
+        print("fixImagePerspective", image, points)
+        guard points.count == 4 else {
+            throw ProcessingError.failedToFixRectanglePerspective
+        }
+
+        let scaleTransform = CGAffineTransform(scaleX: image.extent.size.width, y: image.extent.size.height)
+        let scaledPoints = points.map { $0.applying(scaleTransform) }
+
+        // Fix perspective to focus on our single rectangle
+        let filter = CIFilter.perspectiveCorrection()
+        filter.inputImage = image
+        filter.topLeft = scaledPoints[0]
+        filter.topRight = scaledPoints[3]
+        filter.bottomLeft = scaledPoints[1]
+        filter.bottomRight = scaledPoints[2]
+
+        gridImage = filter.outputImage!
+
+        guard let gridImage = gridImage else {
+            throw ProcessingError.failedToFixRectanglePerspective
+        }
         return gridImage
     }
 
