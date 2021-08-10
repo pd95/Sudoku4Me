@@ -1,6 +1,9 @@
 # macOS
 .DS_Store
 
+# Some temporary resource(s)/folders
+AppIcon
+
 # Xcode User specific settings
 *xcuserdata*
 *.xctimeline
