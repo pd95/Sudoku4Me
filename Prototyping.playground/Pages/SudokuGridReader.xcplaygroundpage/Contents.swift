@@ -19,7 +19,16 @@ var reader = SudokuGridReader()
 
 var cancellables = Set<AnyCancellable>()
 
+reader.$rectangleObservation
+    .dropFirst()
+    .compactMap({$0})
+    .sink { points in
+        print("received rectangle points: \(points)")
+    }
+    .store(in: &cancellables)
+
 reader.$gridImage
+    .dropFirst()
     .compactMap({$0})
     .sink { image in
         print("received \(image)")
