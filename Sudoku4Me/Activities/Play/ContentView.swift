@@ -65,13 +65,7 @@ struct ContentView: View {
                       secondaryButton: .cancel())
             }
             .fullScreenCover(item: $sourceTypeForImport, content: { sourceType in
-                SudokuImportView(selectedImportOption: sourceType) { completion in
-                    if case .success(let game, let gridImage)  = completion {
-                        self.game = game
-                        self.gridImage = gridImage
-                    }
-                    sourceTypeForImport = nil // dismiss overlay
-                }
+                SudokuImportView(selectedImportOption: sourceType, action: importedGame)
             })
             .navigationTitle("Sudoku!")
             .toolbar {
@@ -148,19 +142,26 @@ struct ContentView: View {
         showingStopConfirm = true
     }
 
+    private func importedGame(_ completion: ImportCompletion) {
+        if case .success(let game, let gridImage)  = completion {
+            self.game = game
+            self.gridImage = gridImage
+        }
+        sourceTypeForImport = nil // dismiss overlay
+        startGame()
+    }
+
     private func setValue(_ value: Int?) {
         guard let column = highlightedColumn,
               let row = highlightedRow
         else {
             return
         }
-        withAnimation {
-            do {
-                try game.set(at: (column, row), value: value)
-                game.checkDone()
-            } catch {
-                print("error: \(error)")
-            }
+        do {
+            try game.set(at: (column, row), value: value)
+            game.checkDone()
+        } catch {
+            print("error: \(error)")
         }
     }
 }
