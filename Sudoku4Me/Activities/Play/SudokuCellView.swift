@@ -28,9 +28,17 @@ struct SudokuCellView: View {
                 .stroke(Color.primary, lineWidth: 0.5)
                 .background(backgroundColor)
 
-            Text(String(cell.value ?? -1))
-                .opacity(cell.value == nil ? 0 : 1)
-                .minimumScaleFactor(0.5)
+            // An invisible text placeholder...
+            Text("88")
+                .opacity(0)
+                .overlay( Group {
+                    // ...overlayed with the real text, if any
+                    if let value = cell.value {
+                        Text(value.description)
+                            .frame(maxWidth: .infinity)
+                            .transition(.identity)
+                    }
+                })
         }
         .font(cell.editable ? Font.title2 : Font.title2.bold())
         .contentShape(Rectangle())
