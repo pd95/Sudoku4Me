@@ -7,18 +7,16 @@
 
 import SwiftUI
 
-extension UIImagePickerController.SourceType: Identifiable {
-    public var id: RawValue {
-        rawValue
-    }
-}
-
 struct ImagePicker: UIViewControllerRepresentable {
     typealias UIViewControllerType = UIImagePickerController
 
     var sourceType: UIImagePickerController.SourceType
-    var chooseAction: (UIImage?) -> Void
+    var handleSelectedImage: (UIImage?) -> Void
 
+    init(withSourceType sourceType: UIImagePickerController.SourceType, handler: @escaping (UIImage?) -> Void) {
+        self.sourceType = sourceType
+        self.handleSelectedImage = handler
+    }
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let imagePicker = UIImagePickerController()
@@ -51,18 +49,18 @@ struct ImagePicker: UIViewControllerRepresentable {
         }
 
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            parent.chooseAction(nil)
+            parent.handleSelectedImage(nil)
         }
 
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let editedImage = info[.editedImage] as? UIImage {
-                parent.chooseAction(editedImage)
+                parent.handleSelectedImage(editedImage)
             }
             else if let originalImage = info[.originalImage] as? UIImage {
-                parent.chooseAction(originalImage)
+                parent.handleSelectedImage(originalImage)
             }
             else {
-                parent.chooseAction(nil)
+                parent.handleSelectedImage(nil)
             }
         }
     }
@@ -72,7 +70,7 @@ struct ImagePicker_Previews: PreviewProvider {
     @State static private var image: UIImage?
     static var previews: some View {
         NavigationView {
-            ImagePicker(sourceType: .photoLibrary, chooseAction: { _ in })
+            ImagePicker(withSourceType: .photoLibrary, handler: { _ in })
         }
     }
 }

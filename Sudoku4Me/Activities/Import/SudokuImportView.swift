@@ -24,7 +24,7 @@ struct SudokuImportView: View {
     var body: some View {
         NavigationView {
             if !reader.hasValidInputImage {
-                ImagePicker(sourceType: .photoLibrary, chooseAction: processImage)
+                ImagePicker(withSourceType: .photoLibrary, handler: processImage)
                     .ignoresSafeArea()
                     .navigationBarHidden(true)
             }
