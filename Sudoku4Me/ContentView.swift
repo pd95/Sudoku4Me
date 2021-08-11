@@ -76,8 +76,8 @@ struct ContentView: View {
             .onChange(of: reader.gridImage, perform: { _ in
                 gridImage = reader.gridUIImage
             })
-            .onChange(of: reader.game, perform: { newValue in
-                if let newGame = newValue, game.status != .running {
+            .onChange(of: reader.game, perform: { newGame in
+                if game.status != .running {
                     game = newGame
                     clearHighlightedCell()
                 }
