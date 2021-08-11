@@ -91,6 +91,7 @@ struct SudokuImportView: View {
 
                 }
                 .padding()
+                .navigationBarHidden(false)
                 .toolbar {
                     ToolbarItemGroup(placement: .cancellationAction) {
                         Button("Cancel", action: dismissView)
@@ -141,6 +142,9 @@ struct SudokuImportView: View {
         if image.imageOrientation != .up {
             ciimage = ciimage.oriented(image.imageOrientation.cgOrientation)
         }
+
+        highlightedColumn = nil
+        highlightedRow = nil
 
         reader.reset()
         reader.process(image: ciimage)
