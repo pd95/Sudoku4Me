@@ -21,6 +21,9 @@
 		178DECC526AD8DC3000410D0 /* SudokuGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178DECC426AD8DC3000410D0 /* SudokuGame.swift */; };
 		17C5316E26ADC4A3001EDE9E /* SudokuCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C5316D26ADC4A3001EDE9E /* SudokuCellView.swift */; };
 		17C5317026ADC63B001EDE9E /* CustomKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C5316F26ADC63B001EDE9E /* CustomKeyboard.swift */; };
+		17F39D1226C3F437006EFB8F /* SudokuImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17F39D1126C3F437006EFB8F /* SudokuImportView.swift */; };
+		17F39D1426C3FB31006EFB8F /* Quadrilateral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17F39D1326C3FB31006EFB8F /* Quadrilateral.swift */; };
+		17F39D1826C407F3006EFB8F /* ImportSourceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17F39D1726C407F3006EFB8F /* ImportSourceType.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +44,9 @@
 		178DECC426AD8DC3000410D0 /* SudokuGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuGame.swift; sourceTree = "<group>"; };
 		17C5316D26ADC4A3001EDE9E /* SudokuCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuCellView.swift; sourceTree = "<group>"; };
 		17C5316F26ADC63B001EDE9E /* CustomKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomKeyboard.swift; sourceTree = "<group>"; };
+		17F39D1126C3F437006EFB8F /* SudokuImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuImportView.swift; sourceTree = "<group>"; };
+		17F39D1326C3FB31006EFB8F /* Quadrilateral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quadrilateral.swift; sourceTree = "<group>"; };
+		17F39D1726C407F3006EFB8F /* ImportSourceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportSourceType.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,14 +83,17 @@
 				174F24E526B2EF1000BE445D /* Info.plist */,
 				173669EC26A5CFD2008ACC88 /* Sudoku4MeApp.swift */,
 				178DECC426AD8DC3000410D0 /* SudokuGame.swift */,
-				174F24E126B16F8400BE445D /* SudokuGridReader.swift */,
-				174F24E626B310A800BE445D /* SudokuGridReader+UIImage.swift */,
 				173669EE26A5CFD2008ACC88 /* ContentView.swift */,
-				174F24E326B2DF4400BE445D /* ImagePicker.swift */,
 				174ABD2B26B06F43008779CE /* SudokuGridView.swift */,
-				174F24E826B31B5100BE445D /* Extensions.swift */,
 				17C5316D26ADC4A3001EDE9E /* SudokuCellView.swift */,
 				17C5316F26ADC63B001EDE9E /* CustomKeyboard.swift */,
+				174F24E126B16F8400BE445D /* SudokuGridReader.swift */,
+				174F24E626B310A800BE445D /* SudokuGridReader+UIImage.swift */,
+				17F39D1126C3F437006EFB8F /* SudokuImportView.swift */,
+				17F39D1726C407F3006EFB8F /* ImportSourceType.swift */,
+				17F39D1326C3FB31006EFB8F /* Quadrilateral.swift */,
+				174F24E326B2DF4400BE445D /* ImagePicker.swift */,
+				174F24E826B31B5100BE445D /* Extensions.swift */,
 				1774993F26B5A1A8000D95DD /* DebugViewExtensions.swift */,
 				170BFBF526B5B215001E2A7D /* AdaptiveVStack.swift */,
 				173669F026A5CFD2008ACC88 /* Assets.xcassets */,
@@ -172,13 +181,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				178DECC526AD8DC3000410D0 /* SudokuGame.swift in Sources */,
+				17F39D1826C407F3006EFB8F /* ImportSourceType.swift in Sources */,
 				17C5317026ADC63B001EDE9E /* CustomKeyboard.swift in Sources */,
 				170BFBF626B5B215001E2A7D /* AdaptiveVStack.swift in Sources */,
 				17C5316E26ADC4A3001EDE9E /* SudokuCellView.swift in Sources */,
 				174F24E226B16F8400BE445D /* SudokuGridReader.swift in Sources */,
+				17F39D1226C3F437006EFB8F /* SudokuImportView.swift in Sources */,
 				174ABD2C26B06F43008779CE /* SudokuGridView.swift in Sources */,
 				1774994026B5A1A8000D95DD /* DebugViewExtensions.swift in Sources */,
 				174F24E926B31B5100BE445D /* Extensions.swift in Sources */,
+				17F39D1426C3FB31006EFB8F /* Quadrilateral.swift in Sources */,
 				174F24E426B2DF4400BE445D /* ImagePicker.swift in Sources */,
 				174F24E726B310A800BE445D /* SudokuGridReader+UIImage.swift in Sources */,
 				173669EF26A5CFD2008ACC88 /* ContentView.swift in Sources */,

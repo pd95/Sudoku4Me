@@ -16,4 +16,11 @@ extension SudokuGridReader {
         }
         return UIImage(cgImage: cgimg)
     }
+
+    var scaledUIImage: UIImage? {
+        guard let cgimg = context.createCGImage(scaledImage, from: scaledImage.extent) else {
+            return nil
+        }
+        return UIImage(cgImage: cgimg)
+    }
 }

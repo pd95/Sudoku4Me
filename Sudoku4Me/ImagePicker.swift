@@ -16,11 +16,8 @@ extension UIImagePickerController.SourceType: Identifiable {
 struct ImagePicker: UIViewControllerRepresentable {
     typealias UIViewControllerType = UIImagePickerController
 
-    @Environment(\.presentationMode) var presentationMode
-
     var sourceType: UIImagePickerController.SourceType
-    var allowsEditing: Bool = false
-    @Binding var image: UIImage?
+    var chooseAction: (UIImage?) -> Void
 
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
@@ -28,7 +25,6 @@ struct ImagePicker: UIViewControllerRepresentable {
         if UIImagePickerController.isSourceTypeAvailable(sourceType) {
             imagePicker.sourceType = sourceType
         }
-        imagePicker.allowsEditing = allowsEditing
         imagePicker.delegate = context.coordinator
 
         return imagePicker
@@ -55,18 +51,19 @@ struct ImagePicker: UIViewControllerRepresentable {
         }
 
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            parent.image = nil
-            parent.presentationMode.wrappedValue.dismiss()
+            parent.chooseAction(nil)
         }
 
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let editedImage = info[.editedImage] as? UIImage {
-                parent.image = editedImage
+                parent.chooseAction(editedImage)
             }
             else if let originalImage = info[.originalImage] as? UIImage {
-                parent.image = originalImage
+                parent.chooseAction(originalImage)
             }
-            parent.presentationMode.wrappedValue.dismiss()
+            else {
+                parent.chooseAction(nil)
+            }
         }
     }
 }
@@ -75,7 +72,7 @@ struct ImagePicker_Previews: PreviewProvider {
     @State static private var image: UIImage?
     static var previews: some View {
         NavigationView {
-            ImagePicker(sourceType: .photoLibrary, image: $image)
+            ImagePicker(sourceType: .photoLibrary, chooseAction: { _ in })
         }
     }
 }

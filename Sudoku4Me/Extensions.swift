@@ -32,3 +32,10 @@ extension UIImage.Orientation {
         CGImagePropertyOrientation(self)
     }
 }
+
+
+extension CIImage {
+    func hasMinimumExtent(_ width: CGFloat, _ height: CGFloat) -> Bool {
+        extent.size.width >= width && extent.size.height >= height
+    }
+}

@@ -8,16 +8,13 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var previousGame = SudokuGame.example
     @State private var game = SudokuGame.example
     @State private var highlightedRow: Int?
     @State private var highlightedColumn: Int?
     @State private var showingStopConfirm = false
 
-    @State private var showingErrorMessage = false
-
-    @State private var showingImagePickerWithSource: UIImagePickerController.SourceType?
-    @State private var selectedImage: UIImage?
-    @StateObject private var reader = SudokuGridReader()
+    @State private var sourceTypeForImport: ImportSourceType?
     @State private var gridImage: UIImage?
 
     var allowedValues: Set<Int>? {
@@ -34,20 +31,19 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             AdaptiveVStack {
-
                 SudokuGridView(
-                        game: game,
-                        highlightedRow: $highlightedRow,
-                        highlightedColumn: $highlightedColumn
-                    )
-                    .background(Group {
-                        if let image = gridImage {
-                            Image(uiImage: image)
-                                .resizable()
-                                .opacity(game.status == .initial ? 0.3 : 0)
-                                .padding(-5)
-                        }
-                    })
+                    game: game,
+                    highlightedRow: $highlightedRow,
+                    highlightedColumn: $highlightedColumn
+                )
+                .background(Group {
+                    if let image = gridImage {
+                        Image(uiImage: image)
+                            .resizable()
+                            .opacity(game.status == .initial ? 0.3 : 0)
+                            .padding(-5)
+                    }
+                })
 
                 if game.status == .done {
                     Text("Well done!")
@@ -68,23 +64,13 @@ struct ContentView: View {
                       primaryButton: .default(Text("OK"), action: newGame),
                       secondaryButton: .cancel())
             }
-            .fullScreenCover(item: $showingImagePickerWithSource, content: { sourceType in
-                ImagePicker(sourceType: sourceType, allowsEditing: false, image: $selectedImage)
-                    .ignoresSafeArea()
-            })
-            .onChange(of: selectedImage, perform: processImage)
-            .onChange(of: reader.gridImage, perform: { _ in
-                gridImage = reader.gridUIImage
-            })
-            .onChange(of: reader.game, perform: { newGame in
-                if game.status != .running {
-                    game = newGame
-                    clearHighlightedCell()
-                }
-            })
-            .onReceive(reader.$error, perform: { error in
-                if error != nil {
-                    showingErrorMessage = true
+            .fullScreenCover(item: $sourceTypeForImport, content: { sourceType in
+                SudokuImportView(selectedImportOption: sourceType) { completion in
+                    if case .success(let game, let gridImage)  = completion {
+                        self.game = game
+                        self.gridImage = gridImage
+                    }
+                    sourceTypeForImport = nil // dismiss overlay
                 }
             })
             .navigationTitle("Sudoku!")
@@ -107,19 +93,11 @@ struct ContentView: View {
                 }
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     if game.status == .initial {
-                        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                        ForEach(ImportSourceType.allCases.filter(\.isAvailable)) { sourceType in
                             Button(action: {
-                                showingImagePickerWithSource = .camera
+                                sourceTypeForImport = sourceType
                             }) {
-                                Image(systemName: "camera")
-                                    .imageScale(.large)
-                            }
-                        }
-                        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-                            Button(action: {
-                                showingImagePickerWithSource = .photoLibrary
-                            }) {
-                                Image(systemName: "photo")
+                                Image(systemName: sourceType.symbolName)
                                     .imageScale(.large)
                             }
                         }
@@ -127,9 +105,6 @@ struct ContentView: View {
                 }
             }
         }
-        .alert(isPresented: $showingErrorMessage, content: {
-            Alert(title: Text("An error occured"), message: Text(reader.error?.localizedDescription ?? "Unknown error"), dismissButton: .cancel())
-        })
     }
 
     private func clearHighlightedCell() {
@@ -139,7 +114,7 @@ struct ContentView: View {
 
     private func newGame() {
         print("newGame")
-        resetGame(reader.game ?? SudokuGame())
+        resetGame(previousGame)
     }
 
     private func resetGame(_ game: SudokuGame) {
@@ -150,28 +125,11 @@ struct ContentView: View {
         }
     }
 
-    private func processImage(_ image: UIImage?) {
-        print("processImage")
-        guard let image = image,
-              var ciimage = CIImage(image: image)
-        else {
-            return
-        }
-
-        // Make sure we fix the image orientation if it's not yet "up"
-        if image.imageOrientation != .up {
-            ciimage = ciimage.oriented(image.imageOrientation.cgOrientation)
-        }
-
-        resetGame(SudokuGame())
-        reader.process(image: ciimage)
-    }
-
     private func startGame() {
         print("startGame")
 
         // Make a copy if the game state
-        reader.game = game
+        previousGame = game
 
         withAnimation(.default) {
             clearHighlightedCell()
