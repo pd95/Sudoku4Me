@@ -143,12 +143,12 @@ struct ContentView: View {
     }
 
     private func importedGame(_ completion: ImportCompletion) {
+        sourceTypeForImport = nil // dismiss overlay
         if case .success(let game, let gridImage)  = completion {
             self.game = game
             self.gridImage = gridImage
+            startGame()
         }
-        sourceTypeForImport = nil // dismiss overlay
-        startGame()
     }
 
     private func setValue(_ value: Int?) {
