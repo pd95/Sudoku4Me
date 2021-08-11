@@ -19,6 +19,9 @@ struct SudokuImportView: View {
 
     @StateObject private var reader = SudokuGridReader()
 
+    @State private var highlightedRow: Int?
+    @State private var highlightedColumn: Int?
+
     @State private var showingErrorMessage = false
 
     var body: some View {
@@ -29,29 +32,32 @@ struct SudokuImportView: View {
                     .navigationBarHidden(true)
             }
             else {
-                VStack {
-                    if let image = reader.scaledUIImage {
-                        Image(uiImage: image)
-                            .resizable()
-                            .aspectRatio(1, contentMode: .fit)
-                            .opacity(reader.gridRectangleObservation != nil ? 0.5 : 1)
-                            .overlay(
-                                Group {
-                                    if let rectangleObservation = reader.gridRectangleObservation,
-                                       let shape = Quadrilateral(rectangleObservation: rectangleObservation) {
-                                        shape
-                                            .fill(Color.yellow.opacity(0.4))
-                                            .gesture(
-                                                DragGesture()
-                                                    .onChanged({ value in
-                                                        print(value)
-                                                    })
-                                            )
-                                        shape
-                                            .stroke(.blue, style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                AdaptiveVStack {
+                    if highlightedRow == nil {
+                        if let image = reader.scaledUIImage {
+                            Image(uiImage: image)
+                                .resizable()
+                                .aspectRatio(1, contentMode: .fit)
+                                .opacity(reader.gridRectangleObservation != nil ? 0.5 : 1)
+                                .overlay(
+                                    Group {
+                                        if let rectangleObservation = reader.gridRectangleObservation,
+                                           let shape = Quadrilateral(rectangleObservation: rectangleObservation) {
+                                            shape
+                                                .fill(Color.yellow.opacity(0.4))
+                                                .gesture(
+                                                    DragGesture()
+                                                        .onChanged({ value in
+                                                            print(value)
+                                                        })
+                                                )
+                                            shape
+                                                .stroke(.blue, style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                                        }
                                     }
-                                }
-                            )
+                                )
+                                .transition(.move(edge: .top).combined(with: .opacity))
+                        }
                     }
 
                     Rectangle()
@@ -65,16 +71,24 @@ struct SudokuImportView: View {
                                     .overlay(
                                         SudokuGridView(
                                             game: reader.game,
-                                            highlightedRow: .constant(nil),
-                                            highlightedColumn: .constant(nil)
+                                            highlightedRow: $highlightedRow.animation(.linear),
+                                            highlightedColumn: $highlightedColumn.animation(.linear)
                                         )
-                                            .opacity(reader.cellDetails.isEmpty ? 0 : 1)
+                                        .opacity(reader.cellDetails.isEmpty ? 0 : 1)
+                                        .animation(.linear)
                                     )
                             }
                         })
                         .aspectRatio(1, contentMode: .fit)
 
                     Spacer()
+
+                    if highlightedRow != nil {
+                        CustomKeyboard(tapAction: setValue)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+
                 }
                 .padding()
                 .toolbar {
@@ -130,6 +144,21 @@ struct SudokuImportView: View {
 
         reader.reset()
         reader.process(image: ciimage)
+    }
+
+    private func setValue(_ value: Int?) {
+        guard let column = highlightedColumn,
+              let row = highlightedRow
+        else {
+            return
+        }
+        withAnimation(.linear) {
+            do {
+                try reader.game.set(at: (column, row), value: value)
+            } catch {
+                print("error: \(error)")
+            }
+        }
     }
 }
 
