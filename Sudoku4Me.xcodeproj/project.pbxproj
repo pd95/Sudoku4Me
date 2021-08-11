@@ -80,22 +80,11 @@
 		173669EB26A5CFD2008ACC88 /* Sudoku4Me */ = {
 			isa = PBXGroup;
 			children = (
+				17F39D1926C41E54006EFB8F /* Activities */,
+				17F39D1B26C41E70006EFB8F /* Model */,
+				17F39D1E26C41ECE006EFB8F /* Helper */,
 				174F24E526B2EF1000BE445D /* Info.plist */,
 				173669EC26A5CFD2008ACC88 /* Sudoku4MeApp.swift */,
-				178DECC426AD8DC3000410D0 /* SudokuGame.swift */,
-				173669EE26A5CFD2008ACC88 /* ContentView.swift */,
-				174ABD2B26B06F43008779CE /* SudokuGridView.swift */,
-				17C5316D26ADC4A3001EDE9E /* SudokuCellView.swift */,
-				17C5316F26ADC63B001EDE9E /* CustomKeyboard.swift */,
-				174F24E126B16F8400BE445D /* SudokuGridReader.swift */,
-				174F24E626B310A800BE445D /* SudokuGridReader+UIImage.swift */,
-				17F39D1126C3F437006EFB8F /* SudokuImportView.swift */,
-				17F39D1726C407F3006EFB8F /* ImportSourceType.swift */,
-				17F39D1326C3FB31006EFB8F /* Quadrilateral.swift */,
-				174F24E326B2DF4400BE445D /* ImagePicker.swift */,
-				174F24E826B31B5100BE445D /* Extensions.swift */,
-				1774993F26B5A1A8000D95DD /* DebugViewExtensions.swift */,
-				170BFBF526B5B215001E2A7D /* AdaptiveVStack.swift */,
 				173669F026A5CFD2008ACC88 /* Assets.xcassets */,
 				173669F226A5CFD2008ACC88 /* Preview Content */,
 			);
@@ -108,6 +97,57 @@
 				173669F326A5CFD2008ACC88 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		17F39D1926C41E54006EFB8F /* Activities */ = {
+			isa = PBXGroup;
+			children = (
+				17F39D1A26C41E5E006EFB8F /* Play */,
+				17F39D1C26C41E7B006EFB8F /* Import */,
+			);
+			path = Activities;
+			sourceTree = "<group>";
+		};
+		17F39D1A26C41E5E006EFB8F /* Play */ = {
+			isa = PBXGroup;
+			children = (
+				173669EE26A5CFD2008ACC88 /* ContentView.swift */,
+				174ABD2B26B06F43008779CE /* SudokuGridView.swift */,
+				17C5316D26ADC4A3001EDE9E /* SudokuCellView.swift */,
+				17C5316F26ADC63B001EDE9E /* CustomKeyboard.swift */,
+			);
+			path = Play;
+			sourceTree = "<group>";
+		};
+		17F39D1B26C41E70006EFB8F /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				178DECC426AD8DC3000410D0 /* SudokuGame.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		17F39D1C26C41E7B006EFB8F /* Import */ = {
+			isa = PBXGroup;
+			children = (
+				17F39D1126C3F437006EFB8F /* SudokuImportView.swift */,
+				17F39D1726C407F3006EFB8F /* ImportSourceType.swift */,
+				174F24E326B2DF4400BE445D /* ImagePicker.swift */,
+				174F24E126B16F8400BE445D /* SudokuGridReader.swift */,
+				174F24E626B310A800BE445D /* SudokuGridReader+UIImage.swift */,
+				17F39D1326C3FB31006EFB8F /* Quadrilateral.swift */,
+			);
+			path = Import;
+			sourceTree = "<group>";
+		};
+		17F39D1E26C41ECE006EFB8F /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				174F24E826B31B5100BE445D /* Extensions.swift */,
+				1774993F26B5A1A8000D95DD /* DebugViewExtensions.swift */,
+				170BFBF526B5B215001E2A7D /* AdaptiveVStack.swift */,
+			);
+			path = Helper;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
