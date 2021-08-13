@@ -76,6 +76,7 @@ struct SudokuImportView: View {
                                         )
                                         .opacity(reader.cellDetails.isEmpty ? 0 : 1)
                                         .animation(.linear)
+                                        .padding(4)
                                     )
                             }
                         })
