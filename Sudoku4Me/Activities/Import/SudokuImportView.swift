@@ -40,7 +40,7 @@ struct SudokuImportView: View {
                                 .aspectRatio(1, contentMode: .fit)
                                 .opacity(reader.gridRectangleObservation != nil ? 0.5 : 1)
                                 .overlay(
-                                    Group {
+                                    ZStack {
                                         if let rectangleObservation = reader.gridRectangleObservation,
                                            let shape = Quadrilateral(rectangleObservation: rectangleObservation) {
                                             shape
@@ -93,12 +93,11 @@ struct SudokuImportView: View {
                 .padding()
                 .navigationBarHidden(false)
                 .toolbar {
-                    ToolbarItemGroup(placement: .cancellationAction) {
+                    ToolbarItemGroup(placement: .navigationBarLeading) {
                         Button("Cancel", action: dismissView)
-                    }
-                    ToolbarItemGroup(placement: .automatic) {
-                        Button("Retake") {
-                            reader.reset()
+                        Button(action: reader.reset) {
+                            Label(selectedImportOption.description, systemImage: selectedImportOption.symbolName)
+                                .imageScale(.large)
                         }
                     }
                     ToolbarItemGroup(placement: .confirmationAction) {
