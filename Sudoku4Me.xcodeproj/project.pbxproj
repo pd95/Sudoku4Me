@@ -17,6 +17,7 @@
 		174F24E426B2DF4400BE445D /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 174F24E326B2DF4400BE445D /* ImagePicker.swift */; };
 		174F24E726B310A800BE445D /* SudokuGridReader+UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 174F24E626B310A800BE445D /* SudokuGridReader+UIImage.swift */; };
 		174F24E926B31B5100BE445D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 174F24E826B31B5100BE445D /* Extensions.swift */; };
+		1768BCE726FF891A0084DFDE /* Basic9x9GridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1768BCE626FF891A0084DFDE /* Basic9x9GridView.swift */; };
 		1774994026B5A1A8000D95DD /* DebugViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1774993F26B5A1A8000D95DD /* DebugViewExtensions.swift */; };
 		178DECC526AD8DC3000410D0 /* SudokuGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178DECC426AD8DC3000410D0 /* SudokuGame.swift */; };
 		17C5316E26ADC4A3001EDE9E /* SudokuCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C5316D26ADC4A3001EDE9E /* SudokuCellView.swift */; };
@@ -40,6 +41,7 @@
 		174F24E526B2EF1000BE445D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		174F24E626B310A800BE445D /* SudokuGridReader+UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SudokuGridReader+UIImage.swift"; sourceTree = "<group>"; };
 		174F24E826B31B5100BE445D /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		1768BCE626FF891A0084DFDE /* Basic9x9GridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Basic9x9GridView.swift; sourceTree = "<group>"; };
 		1774993F26B5A1A8000D95DD /* DebugViewExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugViewExtensions.swift; sourceTree = "<group>"; };
 		178DECC426AD8DC3000410D0 /* SudokuGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuGame.swift; sourceTree = "<group>"; };
 		17C5316D26ADC4A3001EDE9E /* SudokuCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuCellView.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				174ABD2B26B06F43008779CE /* SudokuGridView.swift */,
 				17C5316D26ADC4A3001EDE9E /* SudokuCellView.swift */,
 				17C5316F26ADC63B001EDE9E /* CustomKeyboard.swift */,
+				1768BCE626FF891A0084DFDE /* Basic9x9GridView.swift */,
 			);
 			path = Play;
 			sourceTree = "<group>";
@@ -229,6 +232,7 @@
 				17F39D1226C3F437006EFB8F /* SudokuImportView.swift in Sources */,
 				174ABD2C26B06F43008779CE /* SudokuGridView.swift in Sources */,
 				1774994026B5A1A8000D95DD /* DebugViewExtensions.swift in Sources */,
+				1768BCE726FF891A0084DFDE /* Basic9x9GridView.swift in Sources */,
 				174F24E926B31B5100BE445D /* Extensions.swift in Sources */,
 				17F39D1426C3FB31006EFB8F /* Quadrilateral.swift in Sources */,
 				174F24E426B2DF4400BE445D /* ImagePicker.swift in Sources */,

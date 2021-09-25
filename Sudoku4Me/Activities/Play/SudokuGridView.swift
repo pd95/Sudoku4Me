@@ -13,37 +13,9 @@ struct SudokuGridView: View {
     @Binding var highlightedRow: Int?
     @Binding var highlightedColumn: Int?
 
-    let columns: [GridItem] = SudokuGame.positionRange.map({ _ in
-        GridItem(.flexible(minimum: 3, maximum: 44), spacing: 0)
-    })
-
     var body: some View {
-        GeometryReader { proxy in
-            LazyVGrid(
-                columns: columns,
-                spacing: 0,
-                content: gridCells
-            )
-            .overlay(
-                VStack(spacing: 0) {
-                    ForEach(0..<3) { _ in
-                        HStack(spacing: 0) {
-                            ForEach(0..<3) { _ in
-                                Rectangle()
-                                    .stroke(lineWidth: 3)
-                            }
-                        }
-                    }
-                }
-            )
-        }
-        .aspectRatio(1, contentMode: .fit)
-        .frame(minHeight: 150)
-    }
-
-    private func gridCells() -> some View {
-        ForEach(0..<9) { row in
-            ForEach(0..<9) { column in
+        Basic9x9GridView(
+            cellForPosition: { (row, column) in
                 SudokuCellView(
                     cell: game.cell(at: (column, row)),
                     isHighlighted: highlightedRow == row || highlightedColumn == column,
@@ -52,7 +24,7 @@ struct SudokuGridView: View {
                     }
                 )
             }
-        }
+        )
     }
 
     private func hightlightCell(_ column: Int, _ row: Int) {
