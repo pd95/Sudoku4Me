@@ -158,7 +158,7 @@ struct ContentView: View {
             return
         }
         do {
-            try game.set(at: (column, row), value: value)
+            try game.set(value: value, at: (column, row))
             game.checkDone()
         } catch {
             print("error: \(error)")

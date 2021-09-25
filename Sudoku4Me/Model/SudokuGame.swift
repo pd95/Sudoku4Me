@@ -74,7 +74,7 @@ struct SudokuGame: Hashable {
         for row in Self.positionRange {
             for column in Self.positionRange {
                 if let value = grid[row*Self.length + column], Self.valueRange.contains(value) {
-                    try set(at: (column,row), value: value)
+                    try set(value: value, at: (column,row))
                 }
             }
         }
@@ -90,7 +90,7 @@ struct SudokuGame: Hashable {
         cell(at: position).value
     }
 
-    mutating func set(at position: GridPosition, value: GridValue) throws {
+    mutating func set(value: GridValue, at position: GridPosition) throws {
 
         if     Self.positionRange.contains(position.column) == false
             || Self.positionRange.contains(position.row) == false {

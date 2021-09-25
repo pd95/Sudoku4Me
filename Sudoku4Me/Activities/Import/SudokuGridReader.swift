@@ -25,13 +25,13 @@ class SudokuGridReader: ObservableObject {
         let isGood: Bool
     }
 
-    @Published var inputImage = CIImage()
-    @Published var scaledImage = CIImage()
-    @Published var gridRectangleObservation: VNRectangleObservation?
-    @Published var gridImage: CIImage?
-    @Published var cellDetails: [GridCellContent] = []
-    @Published var error: ProcessingError?
-    @Published var game: SudokuGame = SudokuGame()
+    @Published private(set) var inputImage = CIImage()
+    @Published private(set) var scaledImage = CIImage()
+    @Published private(set) var gridRectangleObservation: VNRectangleObservation?
+    @Published private(set) var gridImage: CIImage?
+    @Published private(set) var cellDetails: [GridCellContent] = []
+    @Published private(set) var error: ProcessingError?
+    @Published private(set) var game: SudokuGame = SudokuGame()
 
     private let processingQueue = DispatchQueue(label: "Sudoku4Me.processingQueue")
     private var cancellables = Set<AnyCancellable>()
@@ -301,7 +301,7 @@ class SudokuGridReader: ObservableObject {
                             }
                             if let value = Int(valueString) {
                                 do {
-                                    try game.set(at: (currentCell.column, currentCell.row), value: value)
+                                    try game.set(value: value, at: (currentCell.column, currentCell.row))
                                 } catch {
                                     print(error)
                                 }
@@ -348,5 +348,9 @@ class SudokuGridReader: ObservableObject {
         }
 
         return (game, gridCellContent)
+    }
+
+    func modify(value: SudokuGame.GridValue, at position: SudokuGame.GridPosition) throws {
+        try game.set(value: value, at: position)
     }
 }

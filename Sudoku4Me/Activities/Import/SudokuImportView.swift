@@ -158,7 +158,7 @@ struct SudokuImportView: View {
         }
         withAnimation(.linear) {
             do {
-                try reader.game.set(at: (column, row), value: value)
+                try reader.modify(value: value, at: (column, row))
             } catch {
                 print("error: \(error)")
             }
