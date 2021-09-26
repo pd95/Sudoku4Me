@@ -68,6 +68,7 @@ struct SudokuImportView: View {
                                     .resizable()
                                     .aspectRatio(1, contentMode: .fit)
                                     .opacity(reader.cellDetails.isEmpty ? 1 : 0.5)
+                                    //.opacity(reader.hasCellDetails ? 0.5 : 1)
                                     .overlay(
                                         SudokuGridView(
                                             game: reader.game,
@@ -75,6 +76,7 @@ struct SudokuImportView: View {
                                             highlightedColumn: $highlightedColumn.animation(.linear)
                                         )
                                         .opacity(reader.cellDetails.isEmpty ? 0 : 1)
+                                        //.opacity(reader.hasCellDetails ? 1 : 0)
                                         .animation(.linear)
                                         .padding(4)
                                     )
@@ -85,6 +87,35 @@ struct SudokuImportView: View {
                     Spacer()
 
                     if highlightedRow != nil {
+                        if let row = highlightedRow,
+                            let column = highlightedColumn,
+                           let cellDetail = reader.cellDetail(for: (column, row)),
+                           let cellImage = reader.detailImage(for: cellDetail)
+                        {
+                            HStack {
+                                Image(uiImage: cellImage)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 80, height: 40)
+
+                                VStack(alignment: .leading) {
+                                    ForEach(cellDetail.observations, id:\.self) { observation in
+                                        HStack {
+                                            if observation.text != observation.adjustedText {
+                                                Text(observation.text)
+                                                Image(systemName: "arrow.right")
+                                            }
+                                            Text(observation.adjustedText)
+                                            Image(systemName: "arrow.right")
+                                            Text("\(observation.numberRecognized)")
+                                        }
+                                    }
+                                }
+                                .frame(width: 120)
+                                .font(.title3)
+                            }
+                        }
+
                         CustomKeyboard(tapAction: setValue)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -105,6 +136,16 @@ struct SudokuImportView: View {
                         Button("Start", action: startGame)
                     }
                 }
+                .onChange(of: (highlightedRow ?? 0)*10+(highlightedColumn ?? 0), perform: { newValue in
+                    print("selection changed")
+                    guard let row = highlightedRow, let column = highlightedColumn,
+                          let details = reader.cellDetail(for: (column, row))
+                    else {
+                        return
+                    }
+
+                    print(details.row, details.column, details.observations)
+                })
                 .onReceive(reader.objectWillChange) { reader in
                     print("🔴 reader updated")
                 }

@@ -23,4 +23,11 @@ extension SudokuGridReader {
         }
         return UIImage(cgImage: cgimg)
     }
+
+    func detailImage(for cellDetail: CellDetailObservation) -> UIImage? {
+        guard let cgimg = context.createCGImage(cellDetail.cellImage, from: cellDetail.cellImage.extent) else {
+            return nil
+        }
+        return UIImage(cgImage: cgimg)
+    }
 }

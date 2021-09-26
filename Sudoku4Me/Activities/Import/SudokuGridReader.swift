@@ -14,22 +14,36 @@ import Combine
 class SudokuGridReader: ObservableObject {
     let context = CIContext()
 
-    struct GridCellContent {
+    struct CellDetailObservation {
+        struct TextObservation: Hashable {
+            let textRectangle: VNRectangleObservation
+            let text: String
+            let adjustedText: String
+            let numberRecognized: Int
+            let isGood: Bool
+        }
+
         let row: Int
         let column: Int
         let gridRect: CGRect
-        let textRectangle: VNRectangleObservation
-        let text: String
-        let adjustedText: String
-        let numberRecognized: Int
-        let isGood: Bool
+        let cellImage: CIImage
+
+        var observations: [TextObservation]
+
+        init(row: Int = -1, column: Int = -1, gridRect: CGRect = .zero, cellImage: CIImage = CIImage(), observations: [TextObservation] = []) {
+            self.row = row
+            self.column = column
+            self.gridRect = gridRect
+            self.cellImage = cellImage
+            self.observations = observations
+        }
     }
 
     @Published private(set) var inputImage = CIImage()
     @Published private(set) var scaledImage = CIImage()
     @Published private(set) var gridRectangleObservation: VNRectangleObservation?
     @Published private(set) var gridImage: CIImage?
-    @Published private(set) var cellDetails: [GridCellContent] = []
+    @Published private(set) var cellDetails: [CellDetailObservation] = []
     @Published private(set) var error: ProcessingError?
     @Published private(set) var game: SudokuGame = SudokuGame()
 
@@ -255,7 +269,7 @@ class SudokuGridReader: ObservableObject {
         return gridImage
     }
 
-    private func detectTextInCells(_ gridImage: CIImage) -> (SudokuGame, [GridCellContent]) {
+    private func detectTextInCells(_ gridImage: CIImage) -> (SudokuGame, [CellDetailObservation]) {
         print("detectTextInCells", Thread.isMainThread ? "Main" : "-")
 
         // Clearing previous game and detected grid
@@ -269,11 +283,12 @@ class SudokuGridReader: ObservableObject {
 
         let requestHandler = VNImageRequestHandler(ciImage: gridImage, options: [:])
 
-        var gridCellContent = [GridCellContent]()
-        var currentCell: (column: Int, row: Int, rect: CGRect) = (-1, -1, .zero)
+        var gridCellContent = [CellDetailObservation]()
+        var currentCell = CellDetailObservation(row: -1, column: -1, gridRect: .zero, observations: [])
 
         let recognizeTextRequest = VNRecognizeTextRequest { (request: VNRequest, error: Error?) in
             guard let results = request.results as? [VNRecognizedTextObservation] else {
+                gridCellContent.append(currentCell)
                 return
             }
 
@@ -282,7 +297,7 @@ class SudokuGridReader: ObservableObject {
                     let text = candidateText.string
                     if let box = try? candidateText.boundingBox(for: text.startIndex..<text.endIndex) {
 
-                        gridImage.cropped(to: currentCell.rect)
+                        gridImage.cropped(to: currentCell.gridRect)
                         let isGood = (0.10...0.75).contains(box.boundingBox.size.width)
                                   && (0.3...0.8).contains(box.boundingBox.size.height)
 
@@ -307,16 +322,14 @@ class SudokuGridReader: ObservableObject {
                                 }
                             }
                         }
-                        let cellContent = GridCellContent(
-                            row: currentCell.row, column: currentCell.column,
-                            gridRect: currentCell.rect,
+                        let observation = CellDetailObservation.TextObservation(
                             textRectangle: box,
                             text: String(text[text.startIndex..<text.endIndex]),
                             adjustedText: String(valueString),
                             numberRecognized: Int(valueString) ?? -1,
                             isGood: isGood
                         )
-                        gridCellContent.append(cellContent)
+                        currentCell.observations.append(observation)
                     }
                 }
             }
@@ -329,7 +342,13 @@ class SudokuGridReader: ObservableObject {
             for column in 0..<9 {
                 let point = CGPoint(x: CGFloat(column)*cellWidth+border/2, y: CGFloat(8-row)*cellHeight+border/2)
                 let rect = CGRect(origin: point, size: cellSize).insetBy(dx: cellWidth/20, dy: cellHeight/20)
-                currentCell = (column, row, rect)
+                currentCell = CellDetailObservation(
+                    row: row, column: column,
+                    gridRect: rect,
+                    cellImage: gridImage.cropped(to: rect),
+                    observations: []
+                )
+
 
                 // Convert to a Vision ROI
                 recognizeTextRequest.regionOfInterest = CGRect(
@@ -344,10 +363,20 @@ class SudokuGridReader: ObservableObject {
                 } catch {
                     print("Error while recognizing text: \(error.localizedDescription)")
                 }
+
+                gridCellContent.append(currentCell)
             }
         }
 
         return (game, gridCellContent)
+    }
+
+    var hasCellDetails: Bool {
+        cellDetails.isEmpty == false
+    }
+
+    func cellDetail(for position: SudokuGame.GridPosition) -> CellDetailObservation? {
+        cellDetails.first(where: { $0.row == position.row && $0.column == position.column })
     }
 
     func modify(value: SudokuGame.GridValue, at position: SudokuGame.GridPosition) throws {
