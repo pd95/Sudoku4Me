@@ -91,8 +91,8 @@ struct ContentView: View {
                             Button(action: {
                                 sourceTypeForImport = sourceType
                             }) {
-                                Image(systemName: sourceType.symbolName)
-                                    .imageScale(.large)
+                                Label(sourceType.description,
+                                      systemImage: sourceType.symbolName)
                             }
                         }
                     }
