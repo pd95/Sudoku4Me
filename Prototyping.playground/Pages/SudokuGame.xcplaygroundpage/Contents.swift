@@ -61,7 +61,7 @@ var position: SudokuGame.GridPosition = (column: 7, row: 8)
 let allowedValue = game.allowedValues(for: position)
 
 // Set the value
-try? game.set(at: position, value: 6)
+try? game.set(value: 6, at: position)
 print(game)
 
 // Recheck remaining values

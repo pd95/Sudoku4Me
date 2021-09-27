@@ -19,7 +19,7 @@ var reader = SudokuGridReader()
 
 var cancellables = Set<AnyCancellable>()
 
-reader.$rectangleObservation
+reader.$gridRectangleObservation
     .dropFirst()
     .compactMap({$0})
     .sink { points in
@@ -39,17 +39,21 @@ reader.$gridImage
 print("Start processing data")
 try reader.process(data: data)
 
-
 reader.$cellDetails
     .filter({ !$0.isEmpty })
-    .map {
-        $0.filter({ !$0.isGood })
-            .map {
-                (column: $0.column, row: $0.row, text: $0.text, adjustedText: $0.adjustedText, box: $0.textRectangle.boundingBox.size,
-                    image: reader.gridImage!.cropped(to: $0.gridRect).uiImage
-                )
-            }
-    }
+    .map({ cellDetails in
+        cellDetails.compactMap { cellDetail in
+            cellDetail.observations
+                    .filter({ $0.isGood == false })
+                    .map { observation in
+                        (column: cellDetail.column, row: cellDetail.row,
+                         text: observation.text, adjustedText: observation.adjustedText, box: observation.textRectangle.boundingBox.size,
+                         image: cellDetail.cellImage.uiImage
+                        )
+                    }
+        }
+        .filter({ $0.isEmpty == false })
+    })
     .sink { badCells  in
         print("badCells", badCells)
     }

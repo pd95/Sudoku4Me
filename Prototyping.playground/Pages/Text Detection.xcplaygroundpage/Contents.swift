@@ -119,7 +119,7 @@ func detectTextIn(_ image: CIImage) {
                         }
                         if let value = Int(valueString) {
                             do {
-                                try game.set(at: (currentCell.x, 8-currentCell.y), value: value)
+                                try game.set(value: value, at: (currentCell.x, 8-currentCell.y))
                             } catch {
                                 print(error)
                             }
